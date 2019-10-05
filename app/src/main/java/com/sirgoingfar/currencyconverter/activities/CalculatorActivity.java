@@ -112,4 +112,8 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
         Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
+
+    private void scheduleLatestRatePoll(){
+
+    }
 }
