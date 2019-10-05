@@ -18,7 +18,7 @@ public class Pref {
 
     private final String PREF_CURRENCY_DATA = "pref_currency_data";
     private final String PREF_CURRENCY_LIST = "pref_currency_list";
-    private final String PREF_CURRENCY_STRING = "pref_currency_list";
+    private final String PREF_CURRENCY_STRING = "pref_currency_string";
 
     private static Pref sInstance;
     private SharedPreferences mPref;
