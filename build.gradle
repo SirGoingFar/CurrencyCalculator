@@ -38,6 +38,7 @@ ext {
 
     glideDep = "4.4.0"
 
+    retrofit = "2.6.0"
 }
 
 task clean(type: Delete) {

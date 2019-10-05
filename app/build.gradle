@@ -11,6 +11,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -31,7 +32,7 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutDep"
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
-    compile('com.github.bumptech.glide:glide:4.4.0@aar') {
+    implementation('com.github.bumptech.glide:glide:4.4.0@aar') {
         transitive = true
     }
     implementation 'de.hdodenhof:circleimageview:2.2.0'
@@ -42,6 +43,9 @@ dependencies {
     implementation 'me.saket:better-link-movement-method:2.2.0'
     implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
     implementation "com.jakewharton:butterknife:$rootProject.butterknifeDep"
+    implementation "com.squareup.retrofit2:retrofit:$rootProject.retrofit"
+    implementation "com.squareup.retrofit2:converter-gson:$rootProject.retrofit"
+    implementation 'com.squareup.okhttp3:logging-interceptor:3.5.0'
     annotationProcessor "com.github.bumptech.glide:compiler:$rootProject.glideDep"
     annotationProcessor "com.jakewharton:butterknife-compiler:$rootProject.butterknifeDep"
     annotationProcessor 'androidx.lifecycle:lifecycle-compiler:2.1.0'

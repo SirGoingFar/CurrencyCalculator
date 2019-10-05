@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:background="@color/colorWhite"
             android:padding="@dimen/dimen_32dp"
-            tools:context=".CalculatorActivity">
+            tools:context=".activities.CalculatorActivity">
 
             <ImageView
                 android:id="@+id/iv_hamburger_menu"
