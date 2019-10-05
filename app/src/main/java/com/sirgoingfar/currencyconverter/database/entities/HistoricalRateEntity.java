@@ -4,7 +4,7 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
-@Entity(tableName = "latest_rate")
+@Entity(tableName = "historical_rate")
 public class HistoricalRateEntity {
 
     @PrimaryKey(autoGenerate = true)
