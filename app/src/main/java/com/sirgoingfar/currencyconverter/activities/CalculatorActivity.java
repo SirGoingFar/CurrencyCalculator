@@ -16,6 +16,7 @@ import android.widget.CalendarView;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -49,7 +50,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_calculator);
 
-//        eventBus = App.getEventBusInstance();
+        eventBus = App.getEventBusInstance();
     }
 
     @Override
@@ -57,7 +58,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         super.onStart();
 
         //register EventBus
-//        eventBus.register(this);
+        eventBus.register(this);
 
         //initialize components
         viewHolder = new CalculatorView(this, getWindow().getDecorView().findViewById(android.R.id.content), this);
@@ -68,6 +69,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
             if (currencies == null || currencies.isEmpty())
                 return;
 
+            Toast.makeText(this, "Data exist", Toast.LENGTH_SHORT).show();
             allCurrencyList = currencies;
         });
     }
@@ -77,6 +79,10 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         super.onStop();
 
         //unregister EventBus
-//        eventBus.unregister(this);
+        eventBus.unregister(this);
+    }
+
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void pending(String text){
     }
 }

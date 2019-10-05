@@ -2,7 +2,6 @@ package com.sirgoingfar.currencyconverter.models;
 
 import android.app.Application;
 import android.text.TextUtils;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
@@ -19,8 +18,6 @@ import com.sirgoingfar.currencyconverter.utils.JsonUtil;
 import com.sirgoingfar.currencyconverter.utils.Pref;
 
 import org.greenrobot.eventbus.EventBus;
-import org.greenrobot.eventbus.Subscribe;
-import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,13 +35,10 @@ public class CalculatorViewModel extends AndroidViewModel {
     }
 
     private void init() {
-        eventBus.post("prepare_list");
+        prepareCurrencyList();
     }
 
-    @Subscribe(threadMode = ThreadMode.ASYNC)
-    private void prepareCurrencyList(String text) {
-
-        Toast.makeText(getApplication(), text, Toast.LENGTH_SHORT).show();
+    private void prepareCurrencyList() {
 
         if (pref.isCurrencyListInCache()) {
             postCurrencyList(pref.getCurrencyList());
