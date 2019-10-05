@@ -83,7 +83,7 @@ public class CalculatorActivity extends AppCompatActivity {
         FontUtils.applyDefaultFont(this, tvToCurrencySym, FontUtils.STYLE_SEMIBOLD);
         FontUtils.applyDefaultFont(this, period30Label, FontUtils.STYLE_SEMIBOLD);
         FontUtils.applyDefaultFont(this, period90Label, FontUtils.STYLE_SEMIBOLD);
-        FontUtils.applyDefaultFont(this, btnConvert, FontUtils.STYLE_MEDIUM);
+        FontUtils.applyDefaultFont(this, btnConvert, FontUtils.STYLE_REGULAR);
         FontUtils.applyDefaultFont(this, tvEmailNotif, FontUtils.STYLE_MEDIUM);
 
         Glide.with(this)
