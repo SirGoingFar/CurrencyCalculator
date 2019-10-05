@@ -1,3 +1,17 @@
-<resources>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="app_name">CurrencyConverter</string>
+    <string name="text_menu_icon">menu_icon</string>
+    <string name="text_sign_up">Sign up</string>
+    <string name="text_currency">Currency</string>
+    <string name="text_calculator">Calculator.</string>
+    <string name="text_symbol_eur">EUR</string>
+    <string name="text_enter_here">Enter amount here</string>
+    <string name="text_value_here">Value shows here</string>
+    <string name="text_dropdown_image">dropdown_image</string>
+    <string name="text_conversion_arrow">conversion_arrow</string>
+    <string name="text_convert">Convert</string>
+    <string name="text_time_stamp">Mid-market exchange rate at <xliff:g example="13:38" id="timestamp">%s</xliff:g> UTC</string>
+    <string name="text_icon_info">icon_info</string>
+    <string name="text_past_x_days">Past <xliff:g example="30" id="num_of_days">%d</xliff:g> days</string>
+    <string name="text_email_notif">Get rate alerts straight to your email box</string>
 </resources>
