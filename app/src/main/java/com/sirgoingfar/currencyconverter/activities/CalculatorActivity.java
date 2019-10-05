@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Spannable;
 import android.text.SpannableString;
+import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.github.mikephil.charting.renderer.scatter.ChevronUpShapeRenderer;
 import com.sirgoingfar.currencyconverter.App;
 import com.sirgoingfar.currencyconverter.R;
 import com.sirgoingfar.currencyconverter.models.CalculatorViewModel;
@@ -45,6 +47,9 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     private List<Currency> allCurrencyList = new ArrayList<>();
 
+    private Currency currencyFrom;
+    private Currency currencyTo;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,8 +74,8 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
             if (currencies == null || currencies.isEmpty())
                 return;
 
-            Toast.makeText(this, "Data exist", Toast.LENGTH_SHORT).show();
             allCurrencyList = currencies;
+            setupScreen();
         });
     }
 
@@ -82,7 +87,29 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         eventBus.unregister(this);
     }
 
+    private void setupScreen() {
+        if (allCurrencyList.size() < 2) {
+            toastMsg(getString(R.string.text_something_went_wrong));
+            finish();
+        }
+
+        //assign initial currency pair
+        currencyFrom = allCurrencyList.get(0);
+        currencyTo = allCurrencyList.get(1);
+
+        //assign the pair
+        viewHolder.changeCurrentFromViews(currencyFrom);
+        viewHolder.changeCurrentToViews(currencyTo);
+    }
+
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void pending(String text){
+    public void pending(String text) {
+    }
+
+    private void toastMsg(String msg) {
+        if (TextUtils.isEmpty(msg))
+            return;
+
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 }

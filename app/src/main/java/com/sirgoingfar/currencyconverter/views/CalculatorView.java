@@ -15,6 +15,7 @@ import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
 import com.sirgoingfar.currencyconverter.R;
+import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.utils.FontUtils;
 import com.sirgoingfar.currencyconverter.utils.JsonUtil;
 
@@ -158,6 +159,32 @@ public class CalculatorView {
     public void setDestCurrencyFlag(String url) {
         if (TextUtils.isEmpty(url)) return;
         Glide.with(context).load(url).into(ivToCurrencySym);
+    }
+
+    public void setSourceCurrencyText(String code) {
+        if (TextUtils.isEmpty(code))
+            return;
+
+        tvInputCurrency.setText(code);
+        tvFromCurrencySym.setText(code);
+    }
+
+    public void setDestCurrencyText(String code) {
+        if (TextUtils.isEmpty(code))
+            return;
+
+        tvConversionCurrency.setText(code);
+        tvToCurrencySym.setText(code);
+    }
+
+    public void changeCurrentFromViews(Currency currencyFrom) {
+        setSourceCurrencyText(currencyFrom.getCode());
+        setSourceCurrencyFlag(currencyFrom.getFlagUrl());
+    }
+
+    public void changeCurrentToViews(Currency currencyTo) {
+        setDestCurrencyText(currencyTo.getCode());
+        setDestCurrencyFlag(currencyTo.getFlagUrl());
     }
 
     public interface ActionListener {

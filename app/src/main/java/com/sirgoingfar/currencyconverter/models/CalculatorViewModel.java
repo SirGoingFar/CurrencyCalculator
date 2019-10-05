@@ -62,12 +62,15 @@ public class CalculatorViewModel extends AndroidViewModel {
                     return;
 
                 ArrayList<Currency> currenciesArrayList = new ArrayList<>();
+                String currencyString = "";
                 for (CurrencyData.CountryCurrency countryCurrency : countryCurrencies) {
+                    currencyString = currencyString.concat(",").concat(countryCurrency.getCurrencyCode());
                     currenciesArrayList.add(new Currency(countryCurrency.getCurrencyCode(), countryCurrency.getFlag()));
                 }
 
                 //cache the resulting list of currencies
                 pref.saveCurrencyList(currenciesArrayList);
+                pref.saveCurrencyString(currencyString);
                 postCurrencyList(currenciesArrayList);
 
             } catch (JsonParseException ex) {

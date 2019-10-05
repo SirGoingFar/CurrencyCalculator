@@ -18,6 +18,7 @@ public class Pref {
 
     private final String PREF_CURRENCY_DATA = "pref_currency_data";
     private final String PREF_CURRENCY_LIST = "pref_currency_list";
+    private final String PREF_CURRENCY_STRING = "pref_currency_list";
 
     private static Pref sInstance;
     private SharedPreferences mPref;
@@ -76,5 +77,16 @@ public class Pref {
     public boolean isCurrencyListInCache() {
         List<Currency> data = getCurrencyList();
         return data != null && !data.isEmpty();
+    }
+
+    public void saveCurrencyString(String listString) {
+        if (TextUtils.isEmpty(listString))
+            return;
+
+        mPref.edit().putString(PREF_CURRENCY_STRING, listString).apply();
+    }
+
+    public String getCurrencyString() {
+        return mPref.getString(PREF_CURRENCY_STRING, null);
     }
 }
