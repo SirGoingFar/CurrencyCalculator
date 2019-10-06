@@ -15,4 +15,5 @@
     <string name="text_past_x_days">Past <xliff:g example="30" id="num_of_days">%d</xliff:g> days</string>
     <string name="text_email_notif">Get rate alerts straight to your email box</string>
     <string name="text_something_went_wrong">Oops! Something went wrong</string>
+    <string name="text_currency_country_flag">currency_country_flag</string>
 </resources>

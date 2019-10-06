@@ -11,6 +11,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CalendarView;
@@ -22,8 +23,10 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.github.mikephil.charting.renderer.scatter.ChevronUpShapeRenderer;
+import com.ikmich.numberformat.NumberFormatterTextWatcher;
 import com.sirgoingfar.currencyconverter.App;
 import com.sirgoingfar.currencyconverter.R;
+import com.sirgoingfar.currencyconverter.database.entities.LatestRateEntity;
 import com.sirgoingfar.currencyconverter.models.CalculatorViewModel;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.utils.FontUtils;
@@ -39,13 +42,14 @@ import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class CalculatorActivity extends AppCompatActivity implements CalculatorView.ActionListener {
+public class CalculatorActivity extends AppCompatActivity implements CalculatorView.ActionListener, NumberFormatterTextWatcher.InputListener {
 
     private CalculatorView viewHolder;
     private CalculatorViewModel model;
     private EventBus eventBus;
 
     private List<Currency> allCurrencyList = new ArrayList<>();
+    private List<LatestRateEntity> latestRateEntities = new ArrayList<>();
 
     private Currency currencyFrom;
     private Currency currencyTo;
@@ -66,7 +70,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         eventBus.register(this);
 
         //initialize components
-        viewHolder = new CalculatorView(this, getWindow().getDecorView().findViewById(android.R.id.content), this);
+        viewHolder = new CalculatorView(this, getWindow().getDecorView().findViewById(android.R.id.content), this, this);
         model = new CalculatorViewModel(App.getInstance());
 
         //observe data changes
@@ -76,6 +80,14 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
             allCurrencyList = currencies;
             setupScreen();
+        });
+
+        model.getLatestRateLiveData().observe(this, latestRateEntities -> {
+            if(latestRateEntities == null || latestRateEntities.isEmpty())
+                return;
+
+            CalculatorActivity.this.latestRateEntities = latestRateEntities;
+//            computeConversionValue
         });
     }
 
@@ -100,6 +112,9 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         //assign the pair
         viewHolder.changeCurrentFromViews(currencyFrom);
         viewHolder.changeCurrentToViews(currencyTo);
+
+        //fetch latest rate data
+//        model.fetchLatestRate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
@@ -114,6 +129,11 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
     }
 
     private void scheduleLatestRatePoll(){
+
+    }
+
+    @Override
+    public void onChange(String unformatted, String formatted) {
 
     }
 }
