@@ -18,4 +18,5 @@
     <string name="text_currency_country_flag">currency_country_flag</string>
     <string name="text_example">Example</string>
     <string name="text_select_a_currency">Select a currency</string>
+    <string name="text_email_subscription_success_msg">Email alerts subscription successful</string>
 </resources>

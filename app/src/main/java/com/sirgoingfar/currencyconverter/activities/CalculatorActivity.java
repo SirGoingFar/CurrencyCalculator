@@ -183,7 +183,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     @Override
     public void onPeriodSelectorClicked(boolean isPeriod30) {
-
+        viewHolder.toggleGraphPeriodSelector(isPeriod30);
     }
 
     @Override
