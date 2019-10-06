@@ -13,7 +13,7 @@ android {
         vectorDrawables.useSupportLibrary = true
         multiDexEnabled true
 
-//        buildConfigField("String", "FIXER_IO_ACCESS_KEY", FIXER_IO_ACCESS_KEY)
+        buildConfigField("String", "FIXER_IO_ACCESS_KEY", FIXER_IO_ACCESS_KEY)
     }
     buildTypes {
         release {
