@@ -82,7 +82,7 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
                 String currencyString = "";
                 for (CurrencyData.CountryCurrency countryCurrency : countryCurrencies) {
                     currencyString = currencyString.concat(countryCurrency.getCurrencyCode()).concat(",");
-                    currenciesArrayList.add(new Currency(countryCurrency.getCurrencyCode(), countryCurrency.getFlag()));
+                    currenciesArrayList.add(new Currency(countryCurrency.getCurrencyCode(), countryCurrency.getName(), countryCurrency.getFlag()));
                 }
 
                 //cache the resulting list of currencies

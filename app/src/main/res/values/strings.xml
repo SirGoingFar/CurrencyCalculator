@@ -16,4 +16,6 @@
     <string name="text_email_notif">Get rate alerts straight to your email box</string>
     <string name="text_something_went_wrong">Oops! Something went wrong</string>
     <string name="text_currency_country_flag">currency_country_flag</string>
+    <string name="text_example">Example</string>
+    <string name="text_select_a_currency">Select a currency</string>
 </resources>
