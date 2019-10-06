@@ -12,12 +12,15 @@ import com.sirgoingfar.currencyconverter.R;
 import com.sirgoingfar.currencyconverter.database.entities.LatestRateEntity;
 import com.sirgoingfar.currencyconverter.models.CalculatorViewModel;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
+import com.sirgoingfar.currencyconverter.utils.NumberFormatUtil;
 import com.sirgoingfar.currencyconverter.views.CalculatorView;
 
 import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,6 +35,8 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     private Currency currencyFrom;
     private Currency currencyTo;
+
+    private BigDecimal inputValue = new BigDecimal(0);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,7 +71,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
                 return;
 
             CalculatorActivity.this.latestRateEntities = latestRateEntities;
-//            computeConversionValue
+            computeConversionValue();
         });
     }
 
@@ -93,6 +98,10 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         viewHolder.changeCurrentToViews(currencyTo);
 
         //fetch latest rate data
+        fetchLatestRates();
+    }
+
+    private void fetchLatestRates() {
         model.fetchLatestRate();
     }
 
@@ -113,6 +122,60 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     @Override
     public void onChange(String unformatted, String formatted) {
+        inputValue = NumberFormatUtil.parseAmount(unformatted);
+    }
+
+    @Override
+    public void onCurrencySelectorClick(boolean isSourceCurrency, Currency currency) {
 
     }
+
+    @Override
+    public void onPeriodSelectorClicked(boolean isPeriod30) {
+
+    }
+
+    @Override
+    public void onConvertBtnClick() {
+        computeConversionValue();
+    }
+
+    private void computeConversionValue() {
+        if (isLatestRateAvailable()) {
+
+            if(TextUtils.isEmpty(viewHolder.getInputValue())) {
+                viewHolder.setDestCurrencyValue("");
+                return;
+            }
+
+            LatestRateEntity sourceCurrency = getEntityForCurrencyWithCode(currencyFrom.getCode());
+            LatestRateEntity destCurrency = getEntityForCurrencyWithCode(currencyTo.getCode());
+
+            BigDecimal conversionValue = (inputValue.divide(new BigDecimal(sourceCurrency.getRate()), RoundingMode.HALF_EVEN)
+                    .multiply(new BigDecimal(destCurrency.getRate())));
+
+            updateDestCurrencyConversionValue(conversionValue);
+        } else {
+            fetchLatestRates();
+        }
+    }
+
+    private boolean isLatestRateAvailable() {
+        return latestRateEntities != null && !latestRateEntities.isEmpty();
+    }
+
+    private LatestRateEntity getEntityForCurrencyWithCode(String currencyCode) {
+        for (LatestRateEntity entity : latestRateEntities) {
+            if (TextUtils.equals(entity.getCode(), currencyCode))
+                return entity;
+        }
+
+        return null;
+    }
+
+    private void updateDestCurrencyConversionValue(BigDecimal value) {
+        String text = NumberFormatUtil.format(value);
+        viewHolder.setDestCurrencyValue(text);
+    }
+
 }

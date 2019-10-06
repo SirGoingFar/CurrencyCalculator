@@ -2,6 +2,7 @@ package com.sirgoingfar.currencyconverter.views;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -127,6 +128,9 @@ public class CalculatorView {
         //Todo: Make he boolean dynamic
         inputFormatter.setup(false);
 
+        //set click listener on the button
+        btnConvert.setOnClickListener(v -> listener.onConvertBtnClick());
+
         applyFontStyle();
 
         toggleGraphPeriodSelector(true);
@@ -203,7 +207,32 @@ public class CalculatorView {
         setDestCurrencyFlag(currencyTo.getFlagUrl());
     }
 
+    public void setDestCurrencyValue(String text) {
+        if (TextUtils.isEmpty(text)) {
+            tvConversionValue.setText("");
+            return;
+        }
+
+        tvConversionValue.setText(text);
+    }
+
+    public String getInputValue() {
+
+        Editable editable = etValueInput.getText();
+
+        if (editable == null)
+            return null;
+
+        return editable.toString();
+    }
+
     public interface ActionListener {
+
+        void onCurrencySelectorClick(boolean isSourceCurrency, Currency currency);
+
+        void onPeriodSelectorClicked(boolean isPeriod30);
+
+        void onConvertBtnClick();
 
     }
 }
