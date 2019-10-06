@@ -18,6 +18,7 @@ import com.sirgoingfar.currencyconverter.models.data.CurrencyData;
 import com.sirgoingfar.currencyconverter.models.data.LatestRateData;
 import com.sirgoingfar.currencyconverter.network.ApiCaller;
 import com.sirgoingfar.currencyconverter.network.ApiResponseCallback;
+import com.sirgoingfar.currencyconverter.utils.AppExecutors;
 import com.sirgoingfar.currencyconverter.utils.JsonUtil;
 import com.sirgoingfar.currencyconverter.utils.Pref;
 
@@ -36,6 +37,7 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
     private DatabaseTxn dbTxn;
     private EventBus eventBus;
     private Pref pref = Pref.getsInstance();
+    private AppExecutors executors;
 
     private MutableLiveData<List<Currency>> currencyListLiveData = new MutableLiveData<>();
 
@@ -45,6 +47,7 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         eventBus = App.getEventBusInstance();
         apiCaller = new ApiCaller(application, this);
         dbTxn = new DatabaseTxn();
+        executors = App.getExecutors();
         init();
     }
 
@@ -132,8 +135,10 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         if (latestRateDataList == null || latestRateDataList.isEmpty())
             return;
 
-        dbTxn.deleteLatestRates();
-        dbTxn.addLatestRates(latestRateDataList);
+        executors.diskIO().execute(() -> {
+            dbTxn.deleteLatestRates();
+            dbTxn.addLatestRates(latestRateDataList);
+        });
     }
 
     private List<LatestRateEntity> processLatestData(LatestRateData data) {
