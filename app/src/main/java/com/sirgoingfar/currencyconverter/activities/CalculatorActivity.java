@@ -114,7 +114,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         viewHolder.changeCurrentToViews(currencyTo);
 
         //fetch latest rate data
-//        model.fetchLatestRate();
+        model.fetchLatestRate();
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)

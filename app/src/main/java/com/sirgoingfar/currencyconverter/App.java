@@ -6,6 +6,7 @@ import androidx.multidex.MultiDexApplication;
 
 import com.sirgoingfar.currencyconverter.database.AppDatabase;
 import com.sirgoingfar.currencyconverter.database.daos.AppDao;
+import com.sirgoingfar.currencyconverter.utils.AppExecutors;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -14,6 +15,7 @@ public class App extends MultiDexApplication {
     private static Application sApplication;
     private static EventBus sEventBus;
     private static AppDatabase sAppDatabase;
+    private static AppExecutors sExecutors;
 
     @Override
     public void onCreate() {
@@ -25,6 +27,7 @@ public class App extends MultiDexApplication {
                 .sendNoSubscriberEvent(true)
                 .build();
         sAppDatabase = AppDatabase.getInstance(this);
+        sExecutors = AppExecutors.getInstance();
     }
 
     public static Application getInstance() {
@@ -43,4 +46,7 @@ public class App extends MultiDexApplication {
         return sAppDatabase.getDao();
     }
 
+    public static AppExecutors getExecutors() {
+        return sExecutors;
+    }
 }
