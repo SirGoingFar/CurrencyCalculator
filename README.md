@@ -11,10 +11,12 @@ To build this codebase, clone it using the Android Studio, then follow these ste
 
 2. A unique ACCESS_KEY will be generated for you, copy it.
 
-3. On the codebase in Android Studio, open gradle.properties file.
+3. Open the .gitignore file, add "gradle.properties" (without quotation marks) if it's not added by default
 
-4. In the file, add:
+4. On the codebase in Android Studio, open gradle.properties file.
+
+5. In the file, add:
 
 FIXER_IO_ACCESS_KEY = "{{access_key}}", e.g. FIXER_IO_ACCESS_KEY = "81f4f2520xxxxxxxx28640e95f"
 
-5. Build the codebase and enjoy the Calculator!
+6. Build the codebase and enjoy the Calculator!
