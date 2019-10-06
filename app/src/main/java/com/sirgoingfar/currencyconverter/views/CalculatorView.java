@@ -98,18 +98,16 @@ public class CalculatorView {
         tvFromCurrencySym = fromView.findViewById(R.id.tv_currency_sym);
         tvToCurrencySym = toView.findViewById(R.id.tv_currency_sym);
         tvTimestamp = parentView.findViewById(R.id.tv_timestamp_warning);
-        String text = context.getString(R.string.text_time_stamp);
-        SpannableString content = new SpannableString(text);
-        content.setSpan(new UnderlineSpan(), 0, text.length(), 0);
-        tvTimestamp.setText(content);
 
         period30Label = period30Days.findViewById(R.id.tv_period_label);
         period90Label = period90Days.findViewById(R.id.tv_period_label);
         tvEmailNotif = parentView.findViewById(R.id.tv_email_notif);
-        text = context.getString(R.string.text_email_notif);
-        content = new SpannableString(text);
+        String text = context.getString(R.string.text_email_notif);
+        SpannableString content = new SpannableString(text);
         content.setSpan(new UnderlineSpan(), 0, text.length(), 0);
         tvEmailNotif.setText(content);
+
+        updateTimeStamp(context.getString(R.string.text_time_stamp));
 
         period30Label.setText(context.getString(R.string.text_past_x_days, 30));
         period90Label.setText(context.getString(R.string.text_past_x_days, 90));
@@ -129,7 +127,6 @@ public class CalculatorView {
         colorSb.setSpan(foregroundSpan, indexOfTargetedTextInText, indexOfTargetedTextInText + targetedText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         tvCalculatorLabel.setText(colorSb);
 
-        tvTimestamp.setText(context.getString(R.string.text_time_stamp, "--:--"));
         NumberInputFormatter inputFormatter = new NumberInputFormatter.Builder().buildFor(etValueInput);
         inputFormatter.setInputListener(inputListener);
         //Todo: Make he boolean dynamic
@@ -217,6 +214,12 @@ public class CalculatorView {
         period90Label.setSelected(!isPeriod30Days);
         period30Indicator.setVisibility(isPeriod30Days ? View.VISIBLE : View.GONE);
         period90Indicator.setVisibility(isPeriod30Days ? View.GONE : View.VISIBLE);
+    }
+
+    public void updateTimeStamp(String text) {
+        SpannableString content = new SpannableString(text);
+        content.setSpan(new UnderlineSpan(), 0, text.length(), 0);
+        tvTimestamp.setText(content);
     }
 
     public void setSourceCurrencyFlag(String url) {
