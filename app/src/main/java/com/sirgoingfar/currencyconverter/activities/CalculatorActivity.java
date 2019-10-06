@@ -6,6 +6,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.highlight.Highlight;
 import com.ikmich.numberformat.NumberFormatterTextWatcher;
 import com.sirgoingfar.currencyconverter.App;
 import com.sirgoingfar.currencyconverter.R;
@@ -107,6 +109,9 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
         //fetch latest rate data
         fetchLatestRates();
+
+        //Todo
+        viewHolder.setupTrendChart();
     }
 
     private void fetchLatestRates() {
@@ -190,6 +195,16 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
     public void onConvertBtnClick() {
         viewHolder.toggleLoader(true);
         computeConversionValue();
+    }
+
+    @Override
+    public void onValueSelected(Entry e, Highlight h) {
+
+    }
+
+    @Override
+    public void onNothingSelected() {
+
     }
 
     private void computeConversionValue() {

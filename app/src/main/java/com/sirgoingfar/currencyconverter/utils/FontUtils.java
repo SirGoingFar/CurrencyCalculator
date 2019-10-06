@@ -42,7 +42,7 @@ public class FontUtils {
     public static final int STYLE_SEMIBOLD = 4;
     public static final int STYLE_BOLD = 5;
 
-    private static Typeface selectTypeface(Context context, int textStyle) {
+    public static Typeface selectTypeface(Context context, int textStyle) {
         String prefix = "fonts/";
         String font;
         switch (textStyle) {
