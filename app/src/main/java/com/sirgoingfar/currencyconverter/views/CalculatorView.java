@@ -2,6 +2,7 @@ package com.sirgoingfar.currencyconverter.views;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.text.Editable;
 import android.text.Spannable;
 import android.text.SpannableString;
 import android.text.TextUtils;
@@ -10,6 +11,7 @@ import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -52,6 +54,7 @@ public class CalculatorView {
     private EditText etValueInput;
     private ImageView ivFromCurrencySym;
     private ImageView ivToCurrencySym;
+    private ProgressBar pbLoader;
     private CardView periodSelectorView;
     private CardView btnConvert;
 
@@ -114,6 +117,8 @@ public class CalculatorView {
         ivFromCurrencySym = fromView.findViewById(R.id.iv_currency_sym);
         ivToCurrencySym = toView.findViewById(R.id.iv_currency_sym);
 
+        pbLoader = parentView.findViewById(R.id.pb_loading);
+
         text = context.getString(R.string.text_calculator);
         String targetedText = ".";
         int indexOfTargetedTextInText = text.indexOf(targetedText);
@@ -126,6 +131,9 @@ public class CalculatorView {
         inputFormatter.setInputListener(inputListener);
         //Todo: Make he boolean dynamic
         inputFormatter.setup(false);
+
+        //set click listener on the button
+        btnConvert.setOnClickListener(v -> listener.onConvertBtnClick());
 
         applyFontStyle();
 
@@ -148,6 +156,10 @@ public class CalculatorView {
         FontUtils.applyDefaultFont(context, btnConvert, FontUtils.STYLE_REGULAR);
         FontUtils.applyDefaultFont(context, tvEmailNotif, FontUtils.STYLE_MEDIUM);
 
+    }
+
+    public void toggleLoader(boolean show) {
+        pbLoader.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public void toggleGraphPeriodSelector(boolean isPeriod30Days) {
@@ -203,7 +215,32 @@ public class CalculatorView {
         setDestCurrencyFlag(currencyTo.getFlagUrl());
     }
 
+    public void setDestCurrencyValue(String text) {
+        if (TextUtils.isEmpty(text)) {
+            tvConversionValue.setText("");
+            return;
+        }
+
+        tvConversionValue.setText(text);
+    }
+
+    public String getInputValue() {
+
+        Editable editable = etValueInput.getText();
+
+        if (editable == null)
+            return null;
+
+        return editable.toString();
+    }
+
     public interface ActionListener {
+
+        void onCurrencySelectorClick(boolean isSourceCurrency, Currency currency);
+
+        void onPeriodSelectorClicked(boolean isPeriod30);
+
+        void onConvertBtnClick();
 
     }
 }

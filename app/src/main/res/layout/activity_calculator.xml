@@ -111,15 +111,51 @@
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/ll_currency_section">
 
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_margin="@dimen/dimen_16dp"
-                    android:text="@string/text_convert"
-                    android:textColor="@color/colorLightCyan"
-                    android:textSize="@dimen/text_22sp"
-                    android:textStyle="bold" />
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:paddingTop="@dimen/dimen_16dp"
+                    android:paddingBottom="@dimen/dimen_16dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="@string/text_convert"
+                        android:textColor="@color/colorLightCyan"
+                        android:textSize="@dimen/text_22sp"
+                        android:textStyle="bold"
+                        android:gravity="center"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    <ProgressBar
+                        android:id="@+id/pb_loading"
+                        android:layout_width="@dimen/dimen_20dp"
+                        android:layout_height="@dimen/dimen_20dp"
+                        android:layout_gravity="center_horizontal"
+                        android:alpha="0.7"
+                        android:indeterminate="true"
+                        android:indeterminateTint="@color/colorPrimaryDark"
+                        android:indeterminateTintMode="src_atop"
+                        tools:ignore="UnusedAttribute"
+                        android:visibility="gone"
+                        android:layout_marginLeft="@dimen/dimen_16dp"
+                        android:layout_marginStart="@dimen/dimen_16dp"
+                        app:layout_constraintLeft_toLeftOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintRight_toRightOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintHorizontal_bias="0"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"/>
+
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.cardview.widget.CardView>
 

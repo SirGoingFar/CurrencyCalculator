@@ -39,6 +39,7 @@ public class ApiCaller {
 
                     @Override
                     public void onFailure(Call<LatestRateData> call, Throwable t) {
+
                     }
                 });
     }
