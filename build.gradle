@@ -36,7 +36,7 @@ ext {
     firebaseAnalytics ="16.0.1"
     firebaseCore = "16.0.9"
 
-    glideDep = "4.4.0"
+    glideDep = "4.9.0"
 
     retrofit = "2.6.0"
 }

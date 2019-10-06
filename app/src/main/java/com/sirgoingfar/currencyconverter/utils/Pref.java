@@ -19,6 +19,7 @@ public class Pref {
     private final String PREF_CURRENCY_DATA = "pref_currency_data";
     private final String PREF_CURRENCY_LIST = "pref_currency_list";
     private final String PREF_CURRENCY_STRING = "pref_currency_string";
+    private final String PREF_LATEST_RATE_DATA_POLL_TIME = "pref_latest_rate_data_poll_time";
 
     private static Pref sInstance;
     private SharedPreferences mPref;
@@ -88,5 +89,13 @@ public class Pref {
 
     public String getCurrencyString() {
         return mPref.getString(PREF_CURRENCY_STRING, null);
+    }
+
+    public void saveLatestRatePollTimestamp(long timestamp) {
+        mPref.edit().putLong(PREF_LATEST_RATE_DATA_POLL_TIME, timestamp).apply();
+    }
+
+    public long getLatestRatePollTimestamp() {
+        return mPref.getLong(PREF_LATEST_RATE_DATA_POLL_TIME, 0L);
     }
 }

@@ -9,18 +9,21 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
+import com.ikmich.numberformat.NumberFormatterTextWatcher;
+import com.ikmich.numberformat.NumberInputFormatter;
 import com.sirgoingfar.currencyconverter.R;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.utils.FontUtils;
-import com.sirgoingfar.currencyconverter.utils.JsonUtil;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CalculatorView {
@@ -52,15 +55,18 @@ public class CalculatorView {
     private TextView tvEmailNotif;
 
     private EditText etValueInput;
-    private CircleImageView ivFromCurrencySym;
-    private CircleImageView ivToCurrencySym;
+    private ImageView ivFromCurrencySym;
+    private ImageView ivToCurrencySym;
     private CardView periodSelectorView;
     private CardView btnConvert;
 
-    public CalculatorView(Context context, View parentView, ActionListener listener) {
+    private NumberFormatterTextWatcher.InputListener inputListener;
+
+    public CalculatorView(Context context, View parentView, ActionListener listener, NumberFormatterTextWatcher.InputListener inputListener) {
         this.parentView = parentView;
         this.context = context;
         this.listener = listener;
+        this.inputListener = inputListener;
 
         init();
     }
@@ -121,6 +127,11 @@ public class CalculatorView {
         colorSb.setSpan(foregroundSpan, indexOfTargetedTextInText, indexOfTargetedTextInText + targetedText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         tvCalculatorLabel.setText(colorSb);
 
+        NumberInputFormatter inputFormatter = new NumberInputFormatter.Builder().buildFor(etValueInput);
+        inputFormatter.setInputListener(inputListener);
+        //Todo: Make he boolean dynamic
+        inputFormatter.setup(false);
+
         applyFontStyle();
 
         toggleGraphPeriodSelector(true);
@@ -153,12 +164,22 @@ public class CalculatorView {
 
     public void setSourceCurrencyFlag(String url) {
         if (TextUtils.isEmpty(url)) return;
-        Glide.with(context).load(url).into(ivFromCurrencySym);
+
+        Glide.with(context)
+                .load(url)
+                /*.apply(RequestOptions.circleCropTransform())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)*/
+                .into(ivFromCurrencySym);
     }
 
     public void setDestCurrencyFlag(String url) {
         if (TextUtils.isEmpty(url)) return;
-        Glide.with(context).load(url).into(ivToCurrencySym);
+
+        Glide.with(context)
+                .load(url)
+                /*.apply(RequestOptions.circleCropTransform())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)*/
+                .into(ivToCurrencySym);
     }
 
     public void setSourceCurrencyText(String code) {
