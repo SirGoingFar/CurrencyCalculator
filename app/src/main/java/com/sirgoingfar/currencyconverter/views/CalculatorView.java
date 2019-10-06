@@ -11,6 +11,7 @@ import android.text.style.UnderlineSpan;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
@@ -53,6 +54,7 @@ public class CalculatorView {
     private EditText etValueInput;
     private ImageView ivFromCurrencySym;
     private ImageView ivToCurrencySym;
+    private ProgressBar pbLoader;
     private CardView periodSelectorView;
     private CardView btnConvert;
 
@@ -115,6 +117,8 @@ public class CalculatorView {
         ivFromCurrencySym = fromView.findViewById(R.id.iv_currency_sym);
         ivToCurrencySym = toView.findViewById(R.id.iv_currency_sym);
 
+        pbLoader = parentView.findViewById(R.id.pb_loading);
+
         text = context.getString(R.string.text_calculator);
         String targetedText = ".";
         int indexOfTargetedTextInText = text.indexOf(targetedText);
@@ -152,6 +156,10 @@ public class CalculatorView {
         FontUtils.applyDefaultFont(context, btnConvert, FontUtils.STYLE_REGULAR);
         FontUtils.applyDefaultFont(context, tvEmailNotif, FontUtils.STYLE_MEDIUM);
 
+    }
+
+    public void toggleLoader(boolean show) {
+        pbLoader.setVisibility(show ? View.VISIBLE : View.GONE);
     }
 
     public void toggleGraphPeriodSelector(boolean isPeriod30Days) {

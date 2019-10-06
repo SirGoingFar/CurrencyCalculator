@@ -137,6 +137,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     @Override
     public void onConvertBtnClick() {
+        viewHolder.toggleLoader(true);
         computeConversionValue();
     }
 
@@ -144,7 +145,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         if (isLatestRateAvailable()) {
 
             if(TextUtils.isEmpty(viewHolder.getInputValue())) {
-                viewHolder.setDestCurrencyValue("");
+                updateDestCurrencyValue("");
                 return;
             }
 
@@ -175,7 +176,12 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     private void updateDestCurrencyConversionValue(BigDecimal value) {
         String text = NumberFormatUtil.format(value);
+        updateDestCurrencyValue(text);
+    }
+
+    private void updateDestCurrencyValue(String text){
         viewHolder.setDestCurrencyValue(text);
+        viewHolder.toggleLoader(false);
     }
 
 }
