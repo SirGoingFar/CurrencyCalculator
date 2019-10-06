@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
@@ -106,6 +107,7 @@ public class CalculatorView {
         SpannableString content = new SpannableString(text);
         content.setSpan(new UnderlineSpan(), 0, text.length(), 0);
         tvEmailNotif.setText(content);
+        tvEmailNotif.setOnClickListener(v -> Toast.makeText(context, context.getString(R.string.text_email_subscription_success_msg), Toast.LENGTH_SHORT).show());
 
         updateTimeStamp(context.getString(R.string.text_time_stamp));
 
@@ -133,6 +135,8 @@ public class CalculatorView {
         inputFormatter.setup(false);
 
         //set click listener on action views
+        period30Days.setOnClickListener(v -> listener.onPeriodSelectorClicked(true));
+        period90Days.setOnClickListener(v -> listener.onPeriodSelectorClicked(false));
         btnConvert.setOnClickListener(v -> listener.onConvertBtnClick());
         btnConvert.setOnTouchListener((v, event) -> {
             switch (event.getAction()) {
