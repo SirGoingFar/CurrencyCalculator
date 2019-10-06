@@ -4,6 +4,7 @@ import android.text.TextUtils;
 
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 public class StringUtil {
 
@@ -15,6 +16,7 @@ public class StringUtil {
         Locale locale = Locale.getDefault();
         Calendar calendar = Calendar.getInstance(locale);
         calendar.setTimeInMillis(timeInMillis);
+        calendar.setTimeZone(TimeZone.getTimeZone("UTC"));
 
         long hr = calendar.get(Calendar.HOUR_OF_DAY);
         long min = calendar.get(Calendar.MINUTE);
