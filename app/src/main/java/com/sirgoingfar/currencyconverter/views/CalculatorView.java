@@ -129,6 +129,7 @@ public class CalculatorView {
         colorSb.setSpan(foregroundSpan, indexOfTargetedTextInText, indexOfTargetedTextInText + targetedText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         tvCalculatorLabel.setText(colorSb);
 
+        tvTimestamp.setText(context.getString(R.string.text_time_stamp, "--:--"));
         NumberInputFormatter inputFormatter = new NumberInputFormatter.Builder().buildFor(etValueInput);
         inputFormatter.setInputListener(inputListener);
         //Todo: Make he boolean dynamic
