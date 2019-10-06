@@ -15,16 +15,9 @@ import android.widget.TextView;
 import androidx.cardview.widget.CardView;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
-import com.bumptech.glide.load.engine.DiskCacheStrategy;
-import com.bumptech.glide.request.RequestOptions;
-import com.ikmich.numberformat.NumberFormatterTextWatcher;
-import com.ikmich.numberformat.NumberInputFormatter;
 import com.sirgoingfar.currencyconverter.R;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.utils.FontUtils;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 public class CalculatorView {
 
@@ -60,13 +53,13 @@ public class CalculatorView {
     private CardView periodSelectorView;
     private CardView btnConvert;
 
-    private NumberFormatterTextWatcher.InputListener inputListener;
+//    private NumberFormatterTextWatcher.InputListener inputListener;
 
-    public CalculatorView(Context context, View parentView, ActionListener listener, NumberFormatterTextWatcher.InputListener inputListener) {
+    public CalculatorView(Context context, View parentView, ActionListener listener/*, NumberFormatterTextWatcher.InputListener inputListener*/) {
         this.parentView = parentView;
         this.context = context;
         this.listener = listener;
-        this.inputListener = inputListener;
+//        this.inputListener = inputListener;
 
         init();
     }
@@ -127,10 +120,10 @@ public class CalculatorView {
         colorSb.setSpan(foregroundSpan, indexOfTargetedTextInText, indexOfTargetedTextInText + targetedText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
         tvCalculatorLabel.setText(colorSb);
 
-        NumberInputFormatter inputFormatter = new NumberInputFormatter.Builder().buildFor(etValueInput);
+       /* NumberInputFormatter inputFormatter = new NumberInputFormatter.Builder().buildFor(etValueInput);
         inputFormatter.setInputListener(inputListener);
         //Todo: Make he boolean dynamic
-        inputFormatter.setup(false);
+        inputFormatter.setup(false);*/
 
         applyFontStyle();
 

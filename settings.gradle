@@ -1,2 +1,2 @@
-include ':app', ':NumberInputFormatter-release'
+include ':app'
 rootProject.name='CurrencyConverter'
