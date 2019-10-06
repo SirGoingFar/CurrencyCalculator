@@ -10,8 +10,10 @@ import com.ikmich.numberformat.NumberFormatterTextWatcher;
 import com.sirgoingfar.currencyconverter.App;
 import com.sirgoingfar.currencyconverter.R;
 import com.sirgoingfar.currencyconverter.database.entities.LatestRateEntity;
+import com.sirgoingfar.currencyconverter.dialog_fragments.CurrencyPickerDialogFragment;
 import com.sirgoingfar.currencyconverter.models.CalculatorViewModel;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
+import com.sirgoingfar.currencyconverter.models.data.Option;
 import com.sirgoingfar.currencyconverter.utils.NumberFormatUtil;
 import com.sirgoingfar.currencyconverter.views.CalculatorView;
 
@@ -24,7 +26,7 @@ import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CalculatorActivity extends AppCompatActivity implements CalculatorView.ActionListener, NumberFormatterTextWatcher.InputListener {
+public class CalculatorActivity extends AppCompatActivity implements CalculatorView.ActionListener, NumberFormatterTextWatcher.InputListener, CurrencyPickerDialogFragment.SingleChoiceListener {
 
     private CalculatorView viewHolder;
     private CalculatorViewModel model;
@@ -37,6 +39,11 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
     private Currency currencyTo;
 
     private BigDecimal inputValue = new BigDecimal(0);
+
+    private boolean isSourceCurrency;
+    private int currencyIndex;
+
+    private CurrencyPickerDialogFragment dialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -122,12 +129,55 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     @Override
     public void onChange(String unformatted, String formatted) {
+        if(TextUtils.isEmpty(unformatted))
+            updateDestCurrencyValue("");
+
         inputValue = NumberFormatUtil.parseAmount(unformatted);
     }
 
     @Override
-    public void onCurrencySelectorClick(boolean isSourceCurrency, Currency currency) {
+    public void onCurrencySelectorClick(boolean isSourceCurrency) {
+        this.isSourceCurrency = isSourceCurrency;
 
+        List<Option> optionData = getOtherCurrenciesAside(isSourceCurrency ? currencyTo.getCode() : currencyFrom.getCode(),
+                isSourceCurrency ? currencyFrom.getName() : currencyTo.getName());
+
+        if (optionData.isEmpty())
+            return;
+
+        dialog = CurrencyPickerDialogFragment.newInstance(
+                this, optionData, this, getString(R.string.text_select_a_currency), currencyIndex
+        );
+
+        dialog.show(getSupportFragmentManager(), CurrencyPickerDialogFragment.class.getName());
+    }
+
+    private List<Option> getOtherCurrenciesAside(String excludeCode, String countryName) {
+        List<Option> list = new ArrayList<>();
+
+        for (Currency currency : allCurrencyList) {
+            if (!TextUtils.equals(excludeCode, currency.getCode())) {
+                String desc = currency.getName().concat(" (").concat(currency.getCode()).concat(")");
+                Option option = new Option(desc, currency.getName(), currency.getFlagUrl());
+                list.add(option);
+
+                if (TextUtils.equals(countryName, currency.getName())) {
+                    currencyIndex = list.indexOf(option);
+                    option.setSelected(true);
+                }
+            }
+        }
+
+        return list;
+    }
+
+    private Currency getCurrencyByName(String name) {
+        for (Currency currency : allCurrencyList) {
+            if (TextUtils.equals(currency.getName(), name))
+                return currency;
+        }
+
+        return null;
     }
 
     @Override
@@ -144,7 +194,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
     private void computeConversionValue() {
         if (isLatestRateAvailable()) {
 
-            if(TextUtils.isEmpty(viewHolder.getInputValue())) {
+            if (TextUtils.isEmpty(viewHolder.getInputValue())) {
                 updateDestCurrencyValue("");
                 return;
             }
@@ -179,9 +229,31 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         updateDestCurrencyValue(text);
     }
 
-    private void updateDestCurrencyValue(String text){
+    private void updateDestCurrencyValue(String text) {
         viewHolder.setDestCurrencyValue(text);
         viewHolder.toggleLoader(false);
+    }
+
+    private void updateScreen() {
+
+        if(isSourceCurrency)
+            viewHolder.changeCurrentFromViews(currencyFrom);
+        else
+            viewHolder.changeCurrentToViews(currencyTo);
+
+        computeConversionValue();
+    }
+
+    @Override
+    public void onCurrencyOptionSelected(Option option, int position, boolean isOptionSelected) {
+        Currency selectedCurrency = getCurrencyByName(option.getName());
+
+        if(isSourceCurrency)
+            currencyFrom = selectedCurrency;
+        else
+            currencyTo = selectedCurrency;
+
+        updateScreen();
     }
 
 }

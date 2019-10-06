@@ -22,6 +22,9 @@ public class CurrencyData {
         @SerializedName("CurrencyCode")
         private String currencyCode;
 
+        @SerializedName("Name")
+        private String name;
+
         public String getFlag() {
             return flag;
         }
@@ -30,5 +33,8 @@ public class CurrencyData {
             return currencyCode;
         }
 
+        public String getName() {
+            return name;
+        }
     }
 }

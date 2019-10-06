@@ -3,11 +3,12 @@ package com.sirgoingfar.currencyconverter.models.data;
 import java.math.BigDecimal;
 
 public class Currency implements Cloneable {
-    private String code, flagUrl;
+    private String code, name, flagUrl;
     private BigDecimal rate, conversionValue;
 
-    public Currency(String code, String flagUrl) {
+    public Currency(String code, String name, String flagUrl) {
         this.code = code;
+        this.name = name;
         this.flagUrl = flagUrl;
     }
 
@@ -21,6 +22,10 @@ public class Currency implements Cloneable {
 
     public String getCode() {
         return code;
+    }
+
+    public String getName() {
+        return name;
     }
 
     public String getFlagUrl() {

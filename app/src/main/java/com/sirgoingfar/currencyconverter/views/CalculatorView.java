@@ -8,6 +8,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -15,6 +16,7 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
 import com.ikmich.numberformat.NumberFormatterTextWatcher;
@@ -132,8 +134,51 @@ public class CalculatorView {
         //Todo: Make he boolean dynamic
         inputFormatter.setup(false);
 
-        //set click listener on the button
+        //set click listener on action views
         btnConvert.setOnClickListener(v -> listener.onConvertBtnClick());
+        btnConvert.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    btnConvert.setAlpha(0.6f);
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    btnConvert.setAlpha(1f);
+                    break;
+            }
+
+            return false;
+        });
+
+        fromView.setOnClickListener(v -> onCurrencySelectorClick(true));
+        fromView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    fromView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorGray98));
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    fromView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite));
+                    break;
+            }
+
+            return false;
+        });
+
+        toView.setOnClickListener(v -> onCurrencySelectorClick(false));
+        toView.setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    toView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorGray98));
+                    break;
+
+                case MotionEvent.ACTION_UP:
+                    toView.setBackgroundColor(ContextCompat.getColor(context, R.color.colorWhite));
+                    break;
+            }
+
+            return false;
+        });
 
         applyFontStyle();
 
@@ -156,6 +201,10 @@ public class CalculatorView {
         FontUtils.applyDefaultFont(context, btnConvert, FontUtils.STYLE_REGULAR);
         FontUtils.applyDefaultFont(context, tvEmailNotif, FontUtils.STYLE_MEDIUM);
 
+    }
+
+    private void onCurrencySelectorClick(boolean isSourceCurrency) {
+        listener.onCurrencySelectorClick(isSourceCurrency);
     }
 
     public void toggleLoader(boolean show) {
@@ -236,7 +285,7 @@ public class CalculatorView {
 
     public interface ActionListener {
 
-        void onCurrencySelectorClick(boolean isSourceCurrency, Currency currency);
+        void onCurrencySelectorClick(boolean isSourceCurrency);
 
         void onPeriodSelectorClicked(boolean isPeriod30);
 
