@@ -16,7 +16,7 @@ public class CurrencyData {
 
     public class CountryCurrency {
 
-        @SerializedName("Flag")
+        @SerializedName("FlagPng")
         private String flag;
 
         @SerializedName("CurrencyCode")
