@@ -83,6 +83,8 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
             CalculatorActivity.this.latestRateEntities = latestRateEntities;
             computeConversionValue();
         });
+
+        model.getHistoricalRateData();
     }
 
     @Override

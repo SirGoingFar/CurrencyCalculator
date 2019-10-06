@@ -2,6 +2,7 @@ package com.sirgoingfar.currencyconverter.views;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spannable;
@@ -263,29 +264,22 @@ public class CalculatorView {
     private void setupXAxis() {
         // // X-Axis Style // //
         xAxis = trendChart.getXAxis();
-
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
-
         xAxis.setDrawGridLines(false);
-
-        xAxis.setTypeface(FontUtils.selectTypeface(context, FontUtils.STYLE_REGULAR));
-
-        xAxis.setLabelCount(4, true);
+        xAxis.setTypeface(FontUtils.selectTypeface(context, FontUtils.STYLE_LIGHT));
+        xAxis.setLabelCount(5, true);
+        xAxis.setTextSize(10f);
+        xAxis.setTextColor(Color.parseColor("#A6DFF4"));
     }
 
     private void setupYAxis() {
         // // Y-Axis Style // //
         yAxis = trendChart.getAxisLeft();
 
-        // disable dual axis (only use LEFT axis)
         trendChart.getAxisRight().setEnabled(false);
-        trendChart.getAxisLeft().setEnabled(false);
         yAxis.setDrawGridLines(false);
-
-        // axis range
+        yAxis.setDrawLabels(false);
         yAxis.setAxisMinimum(0f);
-
-
         yAxis.setTypeface(FontUtils.selectTypeface(context, FontUtils.STYLE_REGULAR));
     }
 

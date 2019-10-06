@@ -5,6 +5,7 @@ import androidx.room.Dao;
 import androidx.room.Insert;
 import androidx.room.Query;
 
+import com.sirgoingfar.currencyconverter.database.entities.HistoricalRateEntity;
 import com.sirgoingfar.currencyconverter.database.entities.LatestRateEntity;
 
 import java.util.List;
@@ -17,10 +18,17 @@ public interface AppDao {
     LiveData<List<LatestRateEntity>> getLatestRates();
 
     @Insert
-    void bulkInsertTodo(List<LatestRateEntity> list);
+    void bulkInsertLatestRate(List<LatestRateEntity> list);
 
     @Query("DELETE FROM latest_rate")
     void deleteLatestRates();
 
     //Historical Rate
+    @Insert
+    void bulkInsertHistoricalData(List<HistoricalRateEntity> list);
+
+    @Query("DELETE FROM historical_rate")
+    void deleteHistoricalRates();
+
+//    @Query("SELECT * FROM historical_rate WHERE code=")
 }

@@ -19,6 +19,7 @@ import com.sirgoingfar.currencyconverter.models.data.LatestRateData;
 import com.sirgoingfar.currencyconverter.network.ApiCaller;
 import com.sirgoingfar.currencyconverter.network.ApiResponseCallback;
 import com.sirgoingfar.currencyconverter.utils.AppExecutors;
+import com.sirgoingfar.currencyconverter.utils.DateUtil;
 import com.sirgoingfar.currencyconverter.utils.JsonUtil;
 import com.sirgoingfar.currencyconverter.utils.Pref;
 
@@ -94,6 +95,26 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
                 ex.printStackTrace();
             }
         }
+    }
+
+    public void getHistoricalRateData() {
+        if(!pref.wasHistoricalRateDataPollSuccessful()){
+            pollAllHistoricalData();
+        }else if(pref.canPollYesterdayHistoricalRateData()){
+            pollYesterdayHistoricalRateData();
+        }
+    }
+
+    private void pollAllHistoricalData() {
+        pollHistoricalDataBtw(DateUtil.get90DaysAgoLatestTimeInMillis(), DateUtil.getYstDayLatestTimeInMillis());
+    }
+
+    private void pollYesterdayHistoricalRateData() {
+        pollHistoricalDataBtw(DateUtil.getYstDayEarliestTimeInMillis(), DateUtil.getYstDayLatestTimeInMillis());
+    }
+
+    private void pollHistoricalDataBtw(long start, long end) {
+
     }
 
     public LiveData<List<Currency>> getCurrencyListObserver() {

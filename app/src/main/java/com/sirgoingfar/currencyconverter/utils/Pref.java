@@ -20,6 +20,8 @@ public class Pref {
     private final String PREF_CURRENCY_LIST = "pref_currency_list";
     private final String PREF_CURRENCY_STRING = "pref_currency_string";
     private final String PREF_LATEST_RATE_DATA_POLL_TIME = "pref_latest_rate_data_poll_time";
+    private final String PREF_LAST_HISTORICAL_RATE_DATA_POLL_TIME = "pref_historical_rate_data_poll_time";
+    private final String PREF_HISTORICAL_RATE_DATA_POLL_SUCCESSFUL = "pref_historical_rate_data_poll_successful";
 
     private static Pref sInstance;
     private SharedPreferences mPref;
@@ -97,5 +99,26 @@ public class Pref {
 
     public long getLatestRatePollTimestamp() {
         return mPref.getLong(PREF_LATEST_RATE_DATA_POLL_TIME, 0L);
+    }
+
+    public void setHistoricalRateDataPollSuccessful(boolean successful) {
+        mPref.edit().putBoolean(PREF_HISTORICAL_RATE_DATA_POLL_SUCCESSFUL, successful).apply();
+    }
+
+    public boolean wasHistoricalRateDataPollSuccessful() {
+        return mPref.getBoolean(PREF_HISTORICAL_RATE_DATA_POLL_SUCCESSFUL, false);
+    }
+
+    public void saveHistoricalRateDataLastPollTime(long time) {
+        mPref.edit().putLong(PREF_LAST_HISTORICAL_RATE_DATA_POLL_TIME, time).apply();
+    }
+
+    public boolean canPollYesterdayHistoricalRateData() {
+        long lastPollTime = mPref.getLong(PREF_LAST_HISTORICAL_RATE_DATA_POLL_TIME, 0);
+
+        if (lastPollTime <= 0)
+            return true;
+
+        return DateUtil.isTimeTwoDaysAgoOrMore(lastPollTime);
     }
 }

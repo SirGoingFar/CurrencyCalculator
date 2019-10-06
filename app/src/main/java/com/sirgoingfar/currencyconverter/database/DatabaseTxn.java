@@ -22,6 +22,6 @@ public class DatabaseTxn {
         if (data == null || data.isEmpty())
             return;
 
-        dao.bulkInsertTodo(data);
+        dao.bulkInsertLatestRate(data);
     }
 }
