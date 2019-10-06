@@ -18,6 +18,8 @@ import androidx.fragment.app.DialogFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.sirgoingfar.currencyconverter.R;
 import com.sirgoingfar.currencyconverter.models.data.Option;
 import com.sirgoingfar.currencyconverter.utils.FontUtils;
@@ -103,7 +105,12 @@ public class CurrencyPickerDialogFragment extends DialogFragment {
             Option currentItem = data.get(holder.getAdapterPosition());
 
             holder.ctvDesc.setText(currentItem.getText());
-            Glide.with(context).load(currentItem.getUrl()).into(holder.ivFlag);
+
+            Glide.with(context)
+                    .load(currentItem.getUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
+                    .into(holder.ivFlag);
 
             FontUtils.applyDefaultFont(getContext(), holder.ctvDesc, FontUtils.STYLE_MEDIUM);
 

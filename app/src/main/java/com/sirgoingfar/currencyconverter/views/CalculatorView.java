@@ -20,6 +20,8 @@ import androidx.cardview.widget.CardView;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.ikmich.numberformat.NumberFormatterTextWatcher;
 import com.ikmich.numberformat.NumberInputFormatter;
 import com.sirgoingfar.currencyconverter.R;
@@ -231,8 +233,8 @@ public class CalculatorView {
 
         Glide.with(context)
                 .load(url)
-                /*.apply(RequestOptions.circleCropTransform())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)*/
+                .apply(RequestOptions.circleCropTransform())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(ivFromCurrencySym);
     }
 
@@ -241,9 +243,10 @@ public class CalculatorView {
 
         Glide.with(context)
                 .load(url)
-                /*.apply(RequestOptions.circleCropTransform())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)*/
+                .apply(RequestOptions.circleCropTransform())
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(ivToCurrencySym);
+
     }
 
     public void setSourceCurrencyText(String code) {
