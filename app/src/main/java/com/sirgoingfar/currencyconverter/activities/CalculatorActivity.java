@@ -15,6 +15,7 @@ import com.sirgoingfar.currencyconverter.models.CalculatorViewModel;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.models.data.Option;
 import com.sirgoingfar.currencyconverter.utils.NumberFormatUtil;
+import com.sirgoingfar.currencyconverter.utils.StringUtil;
 import com.sirgoingfar.currencyconverter.views.CalculatorView;
 
 import org.greenrobot.eventbus.EventBus;
@@ -129,7 +130,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     @Override
     public void onChange(String unformatted, String formatted) {
-        if(TextUtils.isEmpty(unformatted))
+        if (TextUtils.isEmpty(unformatted))
             updateDestCurrencyValue("");
 
         inputValue = NumberFormatUtil.parseAmount(unformatted);
@@ -194,6 +195,8 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
     private void computeConversionValue() {
         if (isLatestRateAvailable()) {
 
+            updateTimestamp();
+
             if (TextUtils.isEmpty(viewHolder.getInputValue())) {
                 updateDestCurrencyValue("");
                 return;
@@ -209,6 +212,11 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         } else {
             fetchLatestRates();
         }
+    }
+
+    private void updateTimestamp() {
+        String time = StringUtil.getUTCTimeFrom(model.getLastRateFetchTime());
+        viewHolder.updateTimeStamp(getString(R.string.text_time_stamp, time));
     }
 
     private boolean isLatestRateAvailable() {
@@ -236,7 +244,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     private void updateScreen() {
 
-        if(isSourceCurrency)
+        if (isSourceCurrency)
             viewHolder.changeCurrentFromViews(currencyFrom);
         else
             viewHolder.changeCurrentToViews(currencyTo);
@@ -248,7 +256,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
     public void onCurrencyOptionSelected(Option option, int position, boolean isOptionSelected) {
         Currency selectedCurrency = getCurrencyByName(option.getName());
 
-        if(isSourceCurrency)
+        if (isSourceCurrency)
             currencyFrom = selectedCurrency;
         else
             currencyTo = selectedCurrency;

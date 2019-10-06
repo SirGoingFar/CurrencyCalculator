@@ -100,6 +100,10 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         return currencyListLiveData;
     }
 
+    public Long getLastRateFetchTime() {
+        return pref.getLatestRatePollTimestamp();
+    }
+
     private void postCurrencyList(List<Currency> data) {
         if (data == null || data.isEmpty())
             return;
