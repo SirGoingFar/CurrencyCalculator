@@ -6,6 +6,7 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.ikmich.numberformat.NumberFormatterTextWatcher;
 import com.sirgoingfar.currencyconverter.App;
 import com.sirgoingfar.currencyconverter.R;
 import com.sirgoingfar.currencyconverter.database.entities.LatestRateEntity;
@@ -20,7 +21,7 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CalculatorActivity extends AppCompatActivity implements CalculatorView.ActionListener/*, NumberFormatterTextWatcher.InputListener*/ {
+public class CalculatorActivity extends AppCompatActivity implements CalculatorView.ActionListener, NumberFormatterTextWatcher.InputListener {
 
     private CalculatorView viewHolder;
     private CalculatorViewModel model;
@@ -48,7 +49,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         eventBus.register(this);
 
         //initialize components
-        viewHolder = new CalculatorView(this, getWindow().getDecorView().findViewById(android.R.id.content), this/*, this*/);
+        viewHolder = new CalculatorView(this, getWindow().getDecorView().findViewById(android.R.id.content), this, this);
         model = new CalculatorViewModel(App.getInstance());
 
         //observe data changes
@@ -110,8 +111,8 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     }
 
-    /*@Override
+    @Override
     public void onChange(String unformatted, String formatted) {
 
-    }*/
+    }
 }
