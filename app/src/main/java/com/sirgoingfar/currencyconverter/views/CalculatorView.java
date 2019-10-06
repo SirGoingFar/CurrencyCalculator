@@ -19,8 +19,6 @@ import com.sirgoingfar.currencyconverter.R;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.utils.FontUtils;
 
-import de.hdodenhof.circleimageview.CircleImageView;
-
 public class CalculatorView {
 
     private View parentView;
