@@ -43,6 +43,7 @@ import com.ikmich.numberformat.NumberFormatterTextWatcher;
 import com.ikmich.numberformat.NumberInputFormatter;
 import com.sirgoingfar.currencyconverter.App;
 import com.sirgoingfar.currencyconverter.R;
+import com.sirgoingfar.currencyconverter.customs.TrendChartMarkerView;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.utils.DateUtil;
 import com.sirgoingfar.currencyconverter.utils.FontUtils;
@@ -237,14 +238,14 @@ public class CalculatorView {
 
     }
 
-    public void setupTrendChart(int numOdDaysInPeriod) {
+    public void setupTrendChart(int numOdDaysInPeriod, String currencyCode) {
         // // Chart Style // //
 
         // disable description text
         trendChart.getDescription().setEnabled(false);
 
         // enable touch gestures
-        trendChart.setTouchEnabled(false);
+        trendChart.setTouchEnabled(true);
 
         // set listeners
         trendChart.setOnChartValueSelectedListener(listener);
@@ -255,6 +256,9 @@ public class CalculatorView {
 
         // force pinch zoom along both axis
         trendChart.setPinchZoom(true);
+
+        //set Marker
+        trendChart.setMarker(new TrendChartMarkerView(context, R.layout.layout_trend_chart_marker, currencyCode, numOdDaysInPeriod));
 
         trendChart.setDrawGridBackground(false);
 
@@ -277,10 +281,7 @@ public class CalculatorView {
         xAxis.setValueFormatter(new ValueFormatter() {
             @Override
             public String getAxisLabel(float value, AxisBase axis) {
-                Calendar cal = App.getCalendarInstance();
-                cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR) + (int) value - numOfDaysInPeriod);
-
-                return StringUtil.getFormattedDateText(cal.getTime());
+                return StringUtil.getChartXAxisLabel(value, numOfDaysInPeriod);
             }
         });
 

@@ -123,7 +123,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         fetchLatestRates();
 
         //set up chart
-        viewHolder.setupTrendChart(isPeriod30 ? DateUtil.CONST_30 : DateUtil.CONST_90);
+        viewHolder.setupTrendChart(isPeriod30 ? DateUtil.CONST_30 : DateUtil.CONST_90, currencyTo.getCode());
         onPeriodSelectorClicked(isPeriod30);
     }
 
@@ -204,7 +204,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         this.isPeriod30 = isPeriod30;
         viewHolder.toggleGraphPeriodSelector(isPeriod30);
 
-        viewHolder.setupTrendChart(isPeriod30 ? DateUtil.CONST_30 : DateUtil.CONST_90);
+        viewHolder.setupTrendChart(isPeriod30 ? DateUtil.CONST_30 : DateUtil.CONST_90, currencyTo.getCode());
 
         if (currencyTo == null)
             return;

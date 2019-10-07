@@ -20,4 +20,5 @@
     <string name="text_select_a_currency">Select a currency</string>
     <string name="text_email_subscription_success_msg">Email alerts subscription successful</string>
     <string name="text_empty_chart_text">Historical data for this period is unavailable</string>
+    <string name="marker_body">1 <xliff:g example="EUR" id="currencyCode">%1s</xliff:g> = <xliff:g example="4,222" id="value">%2s</xliff:g></string>
 </resources>

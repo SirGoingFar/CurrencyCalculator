@@ -1,9 +1,12 @@
 package com.sirgoingfar.currencyconverter.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
 
 import com.sirgoingfar.currencyconverter.App;
+import com.sirgoingfar.currencyconverter.R;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -53,9 +56,20 @@ public class StringUtil {
         String dateMonthName = start.getDisplayName(Calendar.MONTH, Calendar.LONG, App.LOCALE);
         text = text.concat(String.valueOf(start.get(Calendar.DAY_OF_MONTH)));
         text = text.concat(" ");
-        text = text.concat(dateMonthName.length() > 3 ? dateMonthName.substring(0, 3).concat(".") : dateMonthName);
+        text = text.concat(dateMonthName.length() > 3 ? dateMonthName.substring(0, 3) : dateMonthName);
 
         return text;
     }
 
+    public static String getChartXAxisLabel(float value, int numOfDaysInPeriod) {
+        Calendar cal = App.getCalendarInstance();
+        cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR) + (int) value - numOfDaysInPeriod);
+        return getFormattedDateText(cal.getTime());
+    }
+
+    public static String getChartMarkerBody(Context context, float value, String currencyCode) {
+        String formattedValue = NumberFormatUtil.format(new BigDecimal(value));
+        String text = context.getString(R.string.marker_body,currencyCode, formattedValue);
+        return text;
+    }
 }
