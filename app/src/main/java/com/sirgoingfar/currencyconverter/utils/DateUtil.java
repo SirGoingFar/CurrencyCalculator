@@ -6,7 +6,9 @@ import java.util.Calendar;
 
 public class DateUtil {
 
-    private static final long A_DAY_MILLIS = (24 * 60 * 60 * 1000) - 1000; //minus 1second - cross over time
+    public static final long A_DAY_MILLIS = (24 * 60 * 60 * 1000) - 1000; //minus 1second - cross over time
+    public static final long THIRTY_DAYS_AGO = System.currentTimeMillis() - (30 * A_DAY_MILLIS);
+    public static final long NINETY_DAYS_AGO = System.currentTimeMillis() - (90 * A_DAY_MILLIS);
 
     public static boolean isTimeTwoDaysAgoOrMore(long lastPollTime) {
 

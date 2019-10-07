@@ -2,7 +2,6 @@ package com.sirgoingfar.currencyconverter.views;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.DashPathEffect;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.Spannable;
@@ -19,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.content.ContextCompat;
 
 import com.bumptech.glide.Glide;
@@ -31,7 +31,6 @@ import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
-import com.github.mikephil.charting.formatter.IAxisValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
@@ -43,9 +42,7 @@ import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.utils.FontUtils;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Locale;
+import java.util.Map;
 
 public class CalculatorView {
 
@@ -79,11 +76,10 @@ public class CalculatorView {
     private ImageView ivFromCurrencySym;
     private ImageView ivToCurrencySym;
     private ProgressBar pbLoader;
-    private CardView periodSelectorView;
+    private ConstraintLayout periodSelectorView;
     private CardView btnConvert;
 
     private LineChart trendChart;
-    private IAxisValueFormatter xAxisValueFormatter;
     private YAxis yAxis;
     private XAxis xAxis;
 
@@ -253,12 +249,11 @@ public class CalculatorView {
 
         trendChart.setDrawGridBackground(false);
 
-        trendChart.setNoDataText(FontUtils.createTypefaceSpan(context, "No historical data for this period").toString());
+        trendChart.setNoDataText(FontUtils.createTypefaceSpan(context, "Historical data for this period is unavailable").toString());
         trendChart.setNoDataTextColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
 
         setupXAxis();
         setupYAxis();
-        bindTrendData();
     }
 
     private void setupXAxis() {
@@ -283,21 +278,13 @@ public class CalculatorView {
         yAxis.setTypeface(FontUtils.selectTypeface(context, FontUtils.STYLE_REGULAR));
     }
 
-    private void bindTrendData() {
-
-        trendChart.clear();
+    public void bindTrendData(Map<Integer, Float> data) {
 
         ArrayList<ILineDataSet> dataSets = new ArrayList<>();
 
-        ArrayList<Entry> entryList = new ArrayList<>();
-        entryList.add(new Entry(1, 6));
-        entryList.add(new Entry(2, 7));
-        entryList.add(new Entry(3, 8));
-        entryList.add(new Entry(4, 9));
-        entryList.add(new Entry(5, 6));
-        entryList.add(new Entry(6, 5));
-        entryList.add(new Entry(7, 4));
-        entryList.add(new Entry(8, 7));
+        trendChart.clear();
+
+        ArrayList<Entry> entryList = processDataMap(data);
 
         LineDataSet netWorthYouDataSet = makeDataSet(entryList, "LABEL_YOU",
                 ContextCompat.getColor(context, R.color.colorPrimaryDark),
@@ -305,26 +292,19 @@ public class CalculatorView {
 
         dataSets.add(netWorthYouDataSet);
 
-
-//        applyAxisBuffer(yAxis, maxY, minY);
-
-
-       /* xAxis.setValueFormatter((weekOfYear,axis)->
-
-    {
-        Calendar cal = Core.getCalendarInstance();
-        cal.set(Calendar.WEEK_OF_YEAR, (int) weekOfYear);
-        String displayName = cal.getDisplayName(Calendar.MONTH, Calendar.ALL_STYLES, Locale.US);
-        if (displayName == null || displayName.equals(lastNetWorthXAxisLabel)) {
-            return "";
-        }
-
-        lastNetWorthXAxisLabel = displayName;
-
-        return displayName;
-    });*/
-
         renderDataSets(dataSets);
+    }
+
+    private ArrayList<Entry> processDataMap(Map<Integer, Float> data) {
+        ArrayList<Entry> entryList = new ArrayList<>();
+
+        if (data == null || data.isEmpty())
+            return entryList;
+
+        for (Map.Entry<Integer, Float> entry : data.entrySet())
+            entryList.add(new Entry(entry.getKey(), entry.getValue()));
+
+        return entryList;
     }
 
     private void renderDataSets(ArrayList<ILineDataSet> dataSets) {
@@ -371,13 +351,6 @@ public class CalculatorView {
             set.setDrawCircleHole(false);
             set.setDrawCircles(false); // No circles
 
-            // customize legend entry
-            // set.setFormLineWidth(1f);
-            // set.setFormLineDashEffect(new DashPathEffect(new float[]{10f, 5f}, 0f));
-            // set.setFormSize(15.f);
-
-            // text size of values
-            // set.setValueTextSize(9f);
             set.setDrawValues(false);
 
             // draw selection line as dashed

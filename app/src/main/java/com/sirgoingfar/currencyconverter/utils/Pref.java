@@ -46,20 +46,6 @@ public class Pref {
         return mGson;
     }
 
-    public void saveCurrencyData(CurrencyData data) {
-        mPref.edit().putString(PREF_CURRENCY_DATA, getGsonInstance().toJson(data, new TypeToken<CurrencyData>() {
-        }.getType())).apply();
-    }
-
-    public CurrencyData getCurrencyData() {
-        String jsonString = mPref.getString(PREF_CURRENCY_DATA, null);
-        if (TextUtils.isEmpty(jsonString))
-            return null;
-
-        return getGsonInstance().fromJson(jsonString, new TypeToken<CurrencyData>() {
-        }.getType());
-    }
-
     public void saveCurrencyList(List<Currency> data) {
         if (data == null)
             return;
@@ -113,8 +99,12 @@ public class Pref {
         mPref.edit().putLong(PREF_LAST_HISTORICAL_RATE_DATA_POLL_TIME, time).apply();
     }
 
+    public long getLastHistoricalRateDataPollTime() {
+        return mPref.getLong(PREF_LAST_HISTORICAL_RATE_DATA_POLL_TIME, 0);
+    }
+
     public boolean canPollYesterdayHistoricalRateData() {
-        long lastPollTime = mPref.getLong(PREF_LAST_HISTORICAL_RATE_DATA_POLL_TIME, 0);
+        long lastPollTime = getLastHistoricalRateDataPollTime();
 
         if (lastPollTime <= 0)
             return true;

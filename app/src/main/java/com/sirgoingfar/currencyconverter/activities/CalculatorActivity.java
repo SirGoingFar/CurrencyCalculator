@@ -5,17 +5,21 @@ import android.text.TextUtils;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
 
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.ikmich.numberformat.NumberFormatterTextWatcher;
 import com.sirgoingfar.currencyconverter.App;
 import com.sirgoingfar.currencyconverter.R;
+import com.sirgoingfar.currencyconverter.database.entities.HistoricalRateEntity;
 import com.sirgoingfar.currencyconverter.database.entities.LatestRateEntity;
 import com.sirgoingfar.currencyconverter.dialog_fragments.CurrencyPickerDialogFragment;
 import com.sirgoingfar.currencyconverter.models.CalculatorViewModel;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.models.data.Option;
+import com.sirgoingfar.currencyconverter.utils.DateUtil;
 import com.sirgoingfar.currencyconverter.utils.NumberFormatUtil;
 import com.sirgoingfar.currencyconverter.utils.StringUtil;
 import com.sirgoingfar.currencyconverter.views.CalculatorView;
@@ -27,7 +31,9 @@ import org.greenrobot.eventbus.ThreadMode;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CalculatorActivity extends AppCompatActivity implements CalculatorView.ActionListener, NumberFormatterTextWatcher.InputListener, CurrencyPickerDialogFragment.SingleChoiceListener {
 
@@ -37,16 +43,20 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     private List<Currency> allCurrencyList = new ArrayList<>();
     private List<LatestRateEntity> latestRateEntities = new ArrayList<>();
+    private List<HistoricalRateEntity> historicalRateEntities = new ArrayList<>();
 
     private Currency currencyFrom;
     private Currency currencyTo;
 
     private BigDecimal inputValue = new BigDecimal(0);
 
+    private boolean isPeriod30 = true;
     private boolean isSourceCurrency;
     private int currencyIndex;
 
     private CurrencyPickerDialogFragment dialog;
+
+    private LiveData<List<HistoricalRateEntity>> historicalRateObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -84,6 +94,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
             computeConversionValue();
         });
 
+        //poll historical rate data
         model.getHistoricalRateData();
     }
 
@@ -112,8 +123,9 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         //fetch latest rate data
         fetchLatestRates();
 
-        //Todo
+        //set up chart
         viewHolder.setupTrendChart();
+        onPeriodSelectorClicked(isPeriod30);
     }
 
     private void fetchLatestRates() {
@@ -190,13 +202,42 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     @Override
     public void onPeriodSelectorClicked(boolean isPeriod30) {
+        this.isPeriod30 = isPeriod30;
         viewHolder.toggleGraphPeriodSelector(isPeriod30);
+
+        if (currencyTo == null)
+            return;
+
+        long minTime = isPeriod30 ? DateUtil.THIRTY_DAYS_AGO : DateUtil.NINETY_DAYS_AGO;
+
+        historicalRateObserver = model.getHistoricalRateLiveData(currencyTo.getCode(), minTime);
+        historicalRateObserver.observe(this, historicalRateEntities -> {
+            if (historicalRateEntities == null || historicalRateEntities.isEmpty())
+                return;
+
+            CalculatorActivity.this.historicalRateEntities = historicalRateEntities;
+            updateTrendChart();
+        });
     }
 
     @Override
     public void onConvertBtnClick() {
         viewHolder.toggleLoader(true);
         computeConversionValue();
+    }
+
+    @Override
+    public void onCurrencyOptionSelected(Option option, int position, boolean isOptionSelected) {
+        Currency selectedCurrency = getCurrencyByName(option.getName());
+
+        if (isSourceCurrency)
+            currencyFrom = selectedCurrency;
+        else {
+            currencyTo = selectedCurrency;
+            onPeriodSelectorClicked(isPeriod30);
+        }
+
+        updateScreen();
     }
 
     @Override
@@ -269,16 +310,20 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         computeConversionValue();
     }
 
-    @Override
-    public void onCurrencyOptionSelected(Option option, int position, boolean isOptionSelected) {
-        Currency selectedCurrency = getCurrencyByName(option.getName());
+    private void updateTrendChart() {
+        viewHolder.bindTrendData(formMapFromList(this.historicalRateEntities));
+    }
 
-        if (isSourceCurrency)
-            currencyFrom = selectedCurrency;
-        else
-            currencyTo = selectedCurrency;
+    private Map<Integer, Float> formMapFromList(List<HistoricalRateEntity> list) {
+        Map<Integer, Float> map = new HashMap<>();
+        int count = 1;
 
-        updateScreen();
+        for (HistoricalRateEntity entity : list){
+            map.put(count, (float) entity.getRate());
+            ++count;
+        }
+
+        return map;
     }
 
 }
