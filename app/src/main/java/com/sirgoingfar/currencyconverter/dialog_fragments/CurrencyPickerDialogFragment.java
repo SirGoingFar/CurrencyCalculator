@@ -28,6 +28,9 @@ import java.util.List;
 
 import butterknife.ButterKnife;
 
+/**
+ * The class is responsible for controlling the Currency Picker dialog
+ */
 public class CurrencyPickerDialogFragment extends DialogFragment {
 
     private RecyclerView recyclerView;
@@ -39,6 +42,13 @@ public class CurrencyPickerDialogFragment extends DialogFragment {
     private int previouslySelectedPosition;
     private String dialogTitle;
 
+    /**
+     * @param context                    the context of the caller
+     * @param items                      the list of option items
+     * @param listener                   the instance of the action listener class
+     * @param dialogTitle                the header instruction text
+     * @param previouslySelectedPosition the option initially selected
+     */
     public static CurrencyPickerDialogFragment newInstance(Context context, List<Option> items, SingleChoiceListener
             listener, String dialogTitle, int previouslySelectedPosition) {
         CurrencyPickerDialogFragment dialog = new CurrencyPickerDialogFragment();
@@ -160,6 +170,9 @@ public class CurrencyPickerDialogFragment extends DialogFragment {
 
     }
 
+    /**
+     * The interface callback for the event function to be invoked when an option item is clicked
+     */
     public interface SingleChoiceListener {
 
         void onCurrencyOptionSelected(Option option, int position, boolean isOptionSelected);

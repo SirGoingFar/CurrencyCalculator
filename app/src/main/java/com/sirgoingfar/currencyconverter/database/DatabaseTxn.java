@@ -8,11 +8,17 @@ import com.sirgoingfar.currencyconverter.utils.AppExecutors;
 
 import java.util.List;
 
+/**
+ * The class is responsible for the database transactions.
+ */
 public class DatabaseTxn {
 
     private AppDao dao;
     private AppExecutors executors;
 
+    /**
+     * @constructor
+     */
     public DatabaseTxn() {
         dao = App.getAppDao();
         executors = App.getExecutors();

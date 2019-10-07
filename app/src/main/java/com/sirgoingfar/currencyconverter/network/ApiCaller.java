@@ -15,6 +15,9 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
+/**
+ * This class is responsible for the actual API calls
+ */
 public class ApiCaller {
 
     private Context context;
@@ -27,6 +30,11 @@ public class ApiCaller {
         this.retrofit = RetrofitUtil.getRetrofitInstance();
     }
 
+    /**
+     * This function makes an API call to fetch Latest Rates for 'symbols'
+     *
+     * @param symbols is the comma-separated list of currency strings whose latest rate will be pulled
+     */
     public void fetchLatestRateFor(String symbols) {
         retrofit.create(RatesEndpoint.class)
                 .getLatestRateFor(BuildConfig.FIXER_IO_ACCESS_KEY, symbols)
@@ -46,8 +54,12 @@ public class ApiCaller {
                 });
     }
 
+    /**
+     * This function makes an API call to fetch Historical Rates for 'symbols'
+     *
+     * @param symbols is the comma-separated list of currency strings whose latest rate will be pulled
+     */
     public void getHistoricalRateFor(String symbols, String date) {
-        Log.d("HISTORICAL", "Date: ".concat(date));
         retrofit.create(RatesEndpoint.class)
                 .getHistoricalRateDataFor(date, BuildConfig.FIXER_IO_ACCESS_KEY, symbols)
                 .enqueue(new Callback<HistoricalRateData>() {
