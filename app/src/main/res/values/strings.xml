@@ -19,4 +19,5 @@
     <string name="text_example">Example</string>
     <string name="text_select_a_currency">Select a currency</string>
     <string name="text_email_subscription_success_msg">Email alerts subscription successful</string>
+    <string name="text_empty_chart_text">Historical data for this period is unavailable</string>
 </resources>

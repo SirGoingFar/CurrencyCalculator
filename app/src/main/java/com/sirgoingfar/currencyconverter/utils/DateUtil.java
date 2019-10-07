@@ -7,9 +7,11 @@ import java.util.TimeZone;
 
 public class DateUtil {
 
+    public static final int CONST_30 = 30;
+    public static final int CONST_90 = 90;
     public static final long A_DAY_MILLIS = (24 * 60 * 60 * 1000) - 1000; //minus 1second - cross over time
-    public static final long THIRTY_DAYS = 30 * A_DAY_MILLIS;
-    public static final long NINTY_DAYS = 90 * A_DAY_MILLIS;
+    public static final long THIRTY_DAYS = CONST_30 * A_DAY_MILLIS;
+    public static final long NINTY_DAYS = CONST_90 * A_DAY_MILLIS;
 
     public static long getThirtyDaysAgoEarliestTime() {
         Calendar cal = App.getCalendarInstance();
