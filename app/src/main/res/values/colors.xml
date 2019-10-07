@@ -16,4 +16,6 @@
     <color name="colorSeaBlue">#3992F8</color>
     <color name="colorWhisper">#eeeeee</color>
     <color name="colorNightRider">#353535</color>
+    <color name="trend_chart_fade_start">#4199ff</color>
+    <color name="trend_chart_fade_end">#0276fe</color>
 </resources>

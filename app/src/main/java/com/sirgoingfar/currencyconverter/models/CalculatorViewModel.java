@@ -12,17 +12,19 @@ import com.google.gson.JsonParseException;
 import com.google.gson.reflect.TypeToken;
 import com.sirgoingfar.currencyconverter.App;
 import com.sirgoingfar.currencyconverter.database.DatabaseTxn;
+import com.sirgoingfar.currencyconverter.database.entities.HistoricalRateEntity;
 import com.sirgoingfar.currencyconverter.database.entities.LatestRateEntity;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
 import com.sirgoingfar.currencyconverter.models.data.CurrencyData;
+import com.sirgoingfar.currencyconverter.models.data.HistoricalRateData;
 import com.sirgoingfar.currencyconverter.models.data.LatestRateData;
 import com.sirgoingfar.currencyconverter.network.ApiCaller;
 import com.sirgoingfar.currencyconverter.network.ApiResponseCallback;
-import com.sirgoingfar.currencyconverter.utils.AppExecutors;
+import com.sirgoingfar.currencyconverter.utils.DateUtil;
 import com.sirgoingfar.currencyconverter.utils.JsonUtil;
 import com.sirgoingfar.currencyconverter.utils.Pref;
+import com.sirgoingfar.currencyconverter.utils.StringUtil;
 
-import org.greenrobot.eventbus.EventBus;
 import org.greenrobot.eventbus.Subscribe;
 import org.greenrobot.eventbus.ThreadMode;
 
@@ -35,19 +37,18 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
     private Application application;
     private ApiCaller apiCaller;
     private DatabaseTxn dbTxn;
-    private EventBus eventBus;
     private Pref pref = Pref.getsInstance();
-    private AppExecutors executors;
 
     private MutableLiveData<List<Currency>> currencyListLiveData = new MutableLiveData<>();
+
+    private long start;
+    private long end;
 
     public CalculatorViewModel(Application application) {
         super(application);
         this.application = application;
-        eventBus = App.getEventBusInstance();
         apiCaller = new ApiCaller(application, this);
         dbTxn = new DatabaseTxn();
-        executors = App.getExecutors();
         init();
     }
 
@@ -96,6 +97,40 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         }
     }
 
+    public void getHistoricalRateData() {
+        if (!pref.wasHistoricalRateDataPollSuccessful()) {
+            dbTxn.deleteHistoricalRates();
+            pollAllHistoricalData();
+        } else if (pref.canPollYesterdayHistoricalRateData()) {
+            pollYesterdayHistoricalRateData();
+        }
+    }
+
+    private void pollAllHistoricalData() {
+        this.start = DateUtil.get90DaysAgoLatestTimeInMillis();
+        this.end = DateUtil.getYstDayLatestTimeInMillis();
+        pollHistoricalDataBtw(start, end);
+    }
+
+    private void pollYesterdayHistoricalRateData() {
+        this.start = DateUtil.getYstDayEarliestTimeInMillis();
+        this.end = DateUtil.getYstDayLatestTimeInMillis();
+        pollHistoricalDataBtw(start, end);
+    }
+
+    private void retryHistoricalRateDataPoll() {
+        pollHistoricalDataBtw(start, end);
+    }
+
+    private void pollHistoricalDataBtw(long start, long end) {
+        if (end > start)
+            apiCaller.getHistoricalRateFor(pref.getCurrencyString(), StringUtil.getDateStringFor(end));
+        else {
+            pref.setHistoricalRateDataPollSuccessful(true);
+            pref.saveHistoricalRateDataLastPollTime(System.currentTimeMillis());
+        }
+    }
+
     public LiveData<List<Currency>> getCurrencyListObserver() {
         return currencyListLiveData;
     }
@@ -112,23 +147,32 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
     }
 
     public void fetchLatestRate() {
-        apiCaller.fetchLatestRate(pref.getCurrencyString());
+        apiCaller.fetchLatestRateFor(pref.getCurrencyString());
     }
 
     public LiveData<List<LatestRateEntity>> getLatestRateLiveData() {
         return App.getAppDao().getLatestRates();
     }
 
+    public LiveData<List<HistoricalRateEntity>> getHistoricalRateLiveData(String code, long minTime) {
+        return App.getAppDao().getHistoricalRates(code, minTime);
+    }
+
     @Override
     public <T> void onSuccess(T response) {
         if (response instanceof LatestRateData) {
             handleLatestRateData((LatestRateData) response);
+        } else if (response instanceof HistoricalRateData) {
+            handleHistoricalRateData((HistoricalRateData) response);
         }
     }
 
     @Override
     public <T> void onFailure(T response) {
-
+        if (response instanceof HistoricalRateData) {
+            //Todo: Implement max retry count
+            retryHistoricalRateDataPoll();
+        }
     }
 
     @Subscribe(threadMode = ThreadMode.ASYNC)
@@ -139,10 +183,7 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         if (latestRateDataList == null || latestRateDataList.isEmpty())
             return;
 
-        executors.diskIO().execute(() -> {
-            dbTxn.deleteLatestRates();
-            dbTxn.addLatestRates(latestRateDataList);
-        });
+        dbTxn.addLatestRates(latestRateDataList);
     }
 
     private List<LatestRateEntity> processLatestData(LatestRateData data) {
@@ -155,6 +196,33 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
 
         for (Map.Entry<String, Double> entry : rateMap.entrySet())
             list.add(new LatestRateEntity(entry.getKey(), entry.getValue(), data.getTimestamp()));
+
+        return list;
+    }
+
+    private void handleHistoricalRateData(HistoricalRateData data) {
+        List<HistoricalRateEntity> historicalRateDataList = processHistoricalData(data);
+
+
+        if (historicalRateDataList == null || historicalRateDataList.isEmpty())
+            return;
+
+        dbTxn.addHistoricalRates(historicalRateDataList);
+
+        this.end -= DateUtil.A_DAY_MILLIS;
+        pollHistoricalDataBtw(start, end);
+    }
+
+    private List<HistoricalRateEntity> processHistoricalData(HistoricalRateData data) {
+        List<HistoricalRateEntity> list = new ArrayList<>();
+
+        if (data == null || data.getRates() == null || data.getRates().isEmpty())
+            return null;
+
+        Map<String, Double> rateMap = data.getRates();
+
+        for (Map.Entry<String, Double> entry : rateMap.entrySet())
+            list.add(new HistoricalRateEntity(entry.getKey(), entry.getValue(), data.getTimestamp()));
 
         return list;
     }
