@@ -32,6 +32,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This class is responsible for sourcing and transmitting data for the app.
+ */
 public class CalculatorViewModel extends AndroidViewModel implements ApiResponseCallback {
 
     private Application application;
@@ -56,6 +59,10 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         prepareCurrencyList();
     }
 
+
+    /**
+     * This function is responsible for preparing the list of available currencies.
+     */
     private void prepareCurrencyList() {
 
         if (pref.isCurrencyListInCache()) {
@@ -97,6 +104,9 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         }
     }
 
+    /**
+     * The function makes an API call to pull the historical rate data.
+     */
     public void getHistoricalRateData() {
         if (!pref.wasHistoricalRateDataPollSuccessful()) {
             dbTxn.deleteHistoricalRates();
@@ -106,21 +116,38 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         }
     }
 
+    /**
+     * This functions makes an API call to pull the entire historical data for the trend period.
+     */
     private void pollAllHistoricalData() {
         this.start = DateUtil.get90DaysAgoLatestTimeInMillis();
         this.end = DateUtil.getYstDayLatestTimeInMillis();
         pollHistoricalDataBtw(start, end);
     }
 
+    /**
+     * This functions makes an API call to pull the historical data for the day before.
+     */
     private void pollYesterdayHistoricalRateData() {
         this.start = DateUtil.getYstDayEarliestTimeInMillis();
         this.end = DateUtil.getYstDayLatestTimeInMillis();
         pollHistoricalDataBtw(start, end);
     }
 
+    /**
+     * This functions retries an API call to pull the historical data within a range.
+     */
     private void retryHistoricalRateDataPoll() {
         pollHistoricalDataBtw(start, end);
     }
+
+
+    /**
+     * This functions makes an API call to pull the historical data within a range.
+     *
+     * @param start the start time
+     * @param end   the end time
+     */
 
     private void pollHistoricalDataBtw(long start, long end) {
         if (end > start)
@@ -131,14 +158,23 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         }
     }
 
+    /**
+     * @return the LiveData for the list of currencies
+     */
     public LiveData<List<Currency>> getCurrencyListObserver() {
         return currencyListLiveData;
     }
 
+    /**
+     * @return the timestamp of when the latest rate was last pulled
+     */
     public Long getLastRateFetchTime() {
         return pref.getLatestRatePollTimestamp();
     }
 
+    /**
+     * This function posts to the list of currencies LiveData object
+     */
     private void postCurrencyList(List<Currency> data) {
         if (data == null || data.isEmpty())
             return;
@@ -146,18 +182,32 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         currencyListLiveData.postValue(data);
     }
 
+    /**
+     * This function makes an API call to fetch latest rates
+     */
     public void fetchLatestRate() {
         apiCaller.fetchLatestRateFor(pref.getCurrencyString());
     }
 
+    /**
+     * @return the LiveData for the list of LatestRateEntities
+     */
     public LiveData<List<LatestRateEntity>> getLatestRateLiveData() {
         return App.getAppDao().getLatestRates();
     }
 
+    /**
+     * @return the LiveData for the list of HistoricalRateLiveData
+     */
     public LiveData<List<HistoricalRateEntity>> getHistoricalRateLiveData(String code, long minTime) {
         return App.getAppDao().getHistoricalRates(code, minTime);
     }
 
+    /**
+     * The callback function that is involved on a successful API call
+     *
+     * @param response is the API success response data
+     */
     @Override
     public <T> void onSuccess(T response) {
         if (response instanceof LatestRateData) {
@@ -167,6 +217,11 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         }
     }
 
+    /**
+     * The callback function that is involved on a failed API call
+     *
+     * @param response is the API call error response
+     */
     @Override
     public <T> void onFailure(T response) {
         if (response instanceof HistoricalRateData) {
@@ -175,6 +230,11 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         }
     }
 
+    /**
+     * This function saves the Latest Rate data to the database
+     *
+     * @param data is the LatestRate data from the API
+     */
     @Subscribe(threadMode = ThreadMode.ASYNC)
     private void handleLatestRateData(LatestRateData data) {
         pref.saveLatestRatePollTimestamp(data.getTimestamp());
@@ -186,6 +246,12 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         dbTxn.addLatestRates(latestRateDataList);
     }
 
+    /**
+     * This function generates a list of LatestRateEntity objects from the LatestRateData
+     *
+     * @param data is the LatestRate data
+     * @return list of LatestRateEntity objects
+     */
     private List<LatestRateEntity> processLatestData(LatestRateData data) {
         List<LatestRateEntity> list = new ArrayList<>();
 
@@ -200,6 +266,13 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         return list;
     }
 
+
+    /**
+     * This function saves the Historical Rate data to the database.
+     * Also, it makes a request for the next historical data in the time series.
+     *
+     * @param data is the HistoricalRateData data from the API
+     */
     private void handleHistoricalRateData(HistoricalRateData data) {
         List<HistoricalRateEntity> historicalRateDataList = processHistoricalData(data);
 
@@ -213,6 +286,12 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         pollHistoricalDataBtw(start, end);
     }
 
+    /**
+     * This function generates a list of HistoricalRateEntity objects from the HistoricalRateData
+     *
+     * @param data is the HistoricalRateData data
+     * @return list of HistoricalRateEntity objects
+     */
     private List<HistoricalRateEntity> processHistoricalData(HistoricalRateData data) {
         List<HistoricalRateEntity> list = new ArrayList<>();
 

@@ -4,6 +4,12 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+/**
+ *
+ * The entity POJO of the latest_rate table
+ *
+ * */
+
 @Entity(tableName = "latest_rate")
 public class LatestRateEntity {
 

@@ -4,6 +4,11 @@ import androidx.room.Entity;
 import androidx.room.Ignore;
 import androidx.room.PrimaryKey;
 
+/**
+ *
+ * The entity POJO of the historical_rate table
+ *
+ * */
 @Entity(tableName = "historical_rate")
 public class HistoricalRateEntity {
 

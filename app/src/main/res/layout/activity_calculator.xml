@@ -227,7 +227,7 @@
             <com.github.mikephil.charting.charts.LineChart
                 android:id="@+id/lc_currency_trend"
                 android:layout_width="0dp"
-                android:layout_height="300dp"
+                android:layout_height="200dp"
                 android:layout_marginTop="@dimen/dimen_32dp"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"

@@ -8,6 +8,15 @@ import androidx.annotation.NonNull;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
+/**
+ * This class provides the Threading tool in the App
+ *
+ * @property diskIO handles the disk I/O
+ * @property networkIO handles the network I/O
+ * @property onMainThread handles the executions on the Worker Thread
+ * @property offMainThread handles the executions off the Worker Thread
+ * @constructor creates an instance of the AppExecutors class
+ */
 public class AppExecutors {
 
     // For Singleton instantiation

@@ -39,14 +39,4 @@ public class Currency implements Cloneable {
     public BigDecimal getConversionValue() {
         return conversionValue;
     }
-
-    public Currency copy() {
-        Currency clone = null;
-        try {
-            clone = (Currency) clone();
-        } catch (CloneNotSupportedException e) {
-            e.printStackTrace();
-        }
-        return clone;
-    }
 }

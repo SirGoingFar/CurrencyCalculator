@@ -11,6 +11,11 @@ import com.sirgoingfar.currencyconverter.database.entities.LatestRateEntity;
 
 import java.util.List;
 
+/**
+ *
+ * The interface consists of functions that performs the CRUD operations on the database
+ *
+ * */
 @Dao
 public interface AppDao {
 

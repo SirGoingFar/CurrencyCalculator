@@ -34,6 +34,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * This is the Controller of the Currency Calculator
+ */
 public class CalculatorActivity extends AppCompatActivity implements CalculatorView.ActionListener, NumberFormatterTextWatcher.InputListener, CurrencyPickerDialogFragment.SingleChoiceListener {
 
     private CalculatorView viewHolder;
@@ -90,7 +93,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
                 return;
 
             CalculatorActivity.this.latestRateEntities = latestRateEntities;
-            computeConversionValue();
+            computeConversionValueAndUpdateScreen();
         });
 
         //poll historical rate data
@@ -116,8 +119,8 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         currencyTo = allCurrencyList.get(1);
 
         //assign the pair
-        viewHolder.changeCurrentFromViews(currencyFrom);
-        viewHolder.changeCurrentToViews(currencyTo);
+        viewHolder.changeCurrentFromViews(currencyFrom.getCode(), currencyFrom.getFlagUrl());
+        viewHolder.changeCurrentToViews(currencyTo.getCode(), currencyTo.getFlagUrl());
 
         //fetch latest rate data
         fetchLatestRates();
@@ -146,6 +149,15 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     }
 
+    /**
+     * This is a callback function that is invoked when there is
+     * a text change on the amount input EditText.
+     * <p>
+     * The function sets the variable that holds the amount input value.
+     *
+     * @param formatted   is the NumberFormat#format output version of the amount input
+     * @param unformatted is the raw amount input
+     */
     @Override
     public void onChange(String unformatted, String formatted) {
         if (TextUtils.isEmpty(unformatted))
@@ -154,6 +166,15 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         inputValue = NumberFormatUtil.parseAmount(unformatted);
     }
 
+    /**
+     * This is a callback function that is invoked when there is a change
+     * in either the source or destination currency.
+     * <p>
+     * The function generates the available currencies data and show the the
+     * Currency Picker dialog
+     *
+     * @param isSourceCurrency is the flag to know which of the currency selector is clicked
+     */
     @Override
     public void onCurrencySelectorClick(boolean isSourceCurrency) {
         this.isSourceCurrency = isSourceCurrency;
@@ -171,6 +192,13 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         dialog.show(getSupportFragmentManager(), CurrencyPickerDialogFragment.class.getName());
     }
 
+    /**
+     * This function generates a list of currency objects excluding the currency with code "excludeCode".
+     *
+     * @param excludeCode is the currency code for the currency whose object is to be excluded from the list
+     * @param countryName is the country name for the currently selected currency
+     * @return a list of currency options
+     */
     private List<Option> getOtherCurrenciesAside(String excludeCode, String countryName) {
         List<Option> list = new ArrayList<>();
 
@@ -190,6 +218,13 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         return list;
     }
 
+
+    /**
+     * This function finds a Currency with name 'name' from the list of all available currencies.
+     *
+     * @param name is the name of the currency
+     * @return the Currency object whose name is 'name'
+     */
     private Currency getCurrencyByName(String name) {
         for (Currency currency : allCurrencyList) {
             if (TextUtils.equals(currency.getName(), name))
@@ -199,6 +234,15 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         return null;
     }
 
+    /**
+     * This is the callback function that is invoked when the Currency Trend Chart selector is clicked.
+     * <p>
+     * The function makes a database call to fetch the historical dataset for the time frame.
+     * <p>
+     * On a successful data pull, the trend chart is updated.
+     *
+     * @param isPeriod30 is the flag to differentiate which of the selection option that is clicked.
+     */
     @Override
     public void onPeriodSelectorClicked(boolean isPeriod30) {
         this.isPeriod30 = isPeriod30;
@@ -226,12 +270,26 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         });
     }
 
+    /**
+     * This is the callback function that is invoked when the `CONVERT` button is clicked.
+     * <p>
+     * This function initiates the currency conversion operation.
+     */
     @Override
     public void onConvertBtnClick() {
         viewHolder.toggleLoader(true);
-        computeConversionValue();
+        computeConversionValueAndUpdateScreen();
     }
 
+    /**
+     * This is the callback function that is called when a Currency is selected from the Currency Picker dialog.
+     * <p>
+     * The function refreshes the screen accordingly.
+     *
+     * @param option           is the Currency clicked.
+     * @param position         is the position of the currency clicked on the list
+     * @param isOptionSelected is the flag that indicates whether an item is selected or mnot.
+     */
     @Override
     public void onCurrencyOptionSelected(Option option, int position, boolean isOptionSelected) {
         Currency selectedCurrency = getCurrencyByName(option.getName());
@@ -256,7 +314,12 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
 
     }
 
-    private void computeConversionValue() {
+    /**
+     * This function is the one that performs the conversion computation.
+     * <p>
+     * It updates the screen accordingly on a successful computation.
+     */
+    private void computeConversionValueAndUpdateScreen() {
         if (isLatestRateAvailable()) {
 
             updateTimestamp();
@@ -278,15 +341,29 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         }
     }
 
+    /**
+     * The function updates the last rate poll time.
+     */
     private void updateTimestamp() {
         String time = StringUtil.getUTCTimeFrom(DateUtil.toMillis(model.getLastRateFetchTime()));
         viewHolder.updateTimeStamp(getString(R.string.text_time_stamp, time));
     }
 
+    /**
+     * The function determines if there is a rate data.
+     *
+     * @return a flag to determine if the rate data is available or not.
+     */
     private boolean isLatestRateAvailable() {
         return latestRateEntities != null && !latestRateEntities.isEmpty();
     }
 
+    /**
+     * This function gets a LatestRateEntity object that has code 'currencyCode'.
+     *
+     * @param currencyCode is the code for the Currency to be returned.
+     * @return an object of LatestRateEntity whose code is `currencyCode`
+     */
     private LatestRateEntity getEntityForCurrencyWithCode(String currencyCode) {
         for (LatestRateEntity entity : latestRateEntities) {
             if (TextUtils.equals(entity.getCode(), currencyCode))
@@ -296,30 +373,62 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         return null;
     }
 
+    /**
+     * This function updates the destination currency view.
+     *
+     * @param value is the equivalence of the
+     */
     private void updateDestCurrencyConversionValue(BigDecimal value) {
         String text = NumberFormatUtil.format(value);
         updateDestCurrencyValue(text);
     }
 
+
+    /**
+     * This function does the destination currency view update.
+     *
+     * @param text is the text to update the view with.
+     */
     private void updateDestCurrencyValue(String text) {
         viewHolder.setDestCurrencyValue(text);
         viewHolder.toggleLoader(false);
     }
 
+    /**
+     * The function updates the screen (currency code and logo)
+     *
+     * It, in turn, triggers the conversion computation.
+     *
+     */
     private void updateScreen() {
 
         if (isSourceCurrency)
-            viewHolder.changeCurrentFromViews(currencyFrom);
+            viewHolder.changeCurrentFromViews(currencyFrom.getCode(), currencyFrom.getFlagUrl());
         else
-            viewHolder.changeCurrentToViews(currencyTo);
+            viewHolder.changeCurrentToViews(currencyTo.getCode(), currencyTo.getFlagUrl());
 
-        computeConversionValue();
+        computeConversionValueAndUpdateScreen();
     }
 
+    /**
+     *
+     * The function updates the Trend chart by bind data to the view (chart).
+     *
+     * */
     private void updateTrendChart() {
         viewHolder.bindTrendData(formMapFromList(this.historicalRateEntities));
     }
 
+
+    /**
+     *
+     * This function generates a map from a List.
+     *
+     * @param list to generate the Map from.
+     *
+     * @return the Map of <Integer, Float>
+     *
+     * */
     private Map<Integer, Float> formMapFromList(List<HistoricalRateEntity> list) {
         Map<Integer, Float> map = new HashMap<>();
         int count = 1;

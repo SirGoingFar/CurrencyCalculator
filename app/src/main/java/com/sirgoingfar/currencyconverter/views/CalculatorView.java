@@ -456,14 +456,14 @@ public class CalculatorView {
         tvToCurrencySym.setText(code);
     }
 
-    public void changeCurrentFromViews(Currency currencyFrom) {
-        setSourceCurrencyText(currencyFrom.getCode());
-        setSourceCurrencyFlag(currencyFrom.getFlagUrl());
+    public void changeCurrentFromViews(String code, String flagUrl) {
+        setSourceCurrencyText(code);
+        setSourceCurrencyFlag(flagUrl);
     }
 
-    public void changeCurrentToViews(Currency currencyTo) {
-        setDestCurrencyText(currencyTo.getCode());
-        setDestCurrencyFlag(currencyTo.getFlagUrl());
+    public void changeCurrentToViews(String code, String flagUrl) {
+        setDestCurrencyText(code);
+        setDestCurrencyFlag(flagUrl);
     }
 
     public void setDestCurrencyValue(String text) {

@@ -28,6 +28,9 @@ public class TrendChartMarkerView extends MarkerView {
      *
      * @param context
      * @param layoutResource the layout resource to use for the MarkerView
+     * @param currencyCode  the currency to show on the MarkerView
+     * @param numOfDaysInPeriod the number of days in the period under consideration
+     *
      */
     public TrendChartMarkerView(Context context, int layoutResource, String currencyCode, int numOfDaysInPeriod) {
 
