@@ -204,7 +204,7 @@ public class CalculatorViewModel extends AndroidViewModel implements ApiResponse
         List<HistoricalRateEntity> historicalRateDataList = processHistoricalData(data);
 
 
-        if (historicalRateDataList == null || historicalRateDataList.isEmpty())
+        if (historicalRateDataList.isEmpty())
             return;
 
         dbTxn.addHistoricalRates(historicalRateDataList);

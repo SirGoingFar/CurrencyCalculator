@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.LiveData;
-import androidx.lifecycle.Observer;
 
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.highlight.Highlight;
@@ -208,7 +207,12 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         if (currencyTo == null)
             return;
 
-        long minTime = isPeriod30 ? DateUtil.THIRTY_DAYS_AGO : DateUtil.NINETY_DAYS_AGO;
+        long minTime;
+
+        if (isPeriod30)
+            minTime = DateUtil.getThirtyDaysAgoEarliestTime();
+        else
+            minTime = DateUtil.getNintyDaysAgoEarliestTime();
 
         historicalRateObserver = model.getHistoricalRateLiveData(currencyTo.getCode(), minTime);
         historicalRateObserver.observe(this, historicalRateEntities -> {
@@ -273,7 +277,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
     }
 
     private void updateTimestamp() {
-        String time = StringUtil.getUTCTimeFrom(model.getLastRateFetchTime());
+        String time = StringUtil.getUTCTimeFrom(DateUtil.toMillis(model.getLastRateFetchTime()));
         viewHolder.updateTimeStamp(getString(R.string.text_time_stamp, time));
     }
 
@@ -318,7 +322,7 @@ public class CalculatorActivity extends AppCompatActivity implements CalculatorV
         Map<Integer, Float> map = new HashMap<>();
         int count = 1;
 
-        for (HistoricalRateEntity entity : list){
+        for (HistoricalRateEntity entity : list) {
             map.put(count, (float) entity.getRate());
             ++count;
         }

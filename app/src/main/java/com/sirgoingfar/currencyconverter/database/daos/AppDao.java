@@ -31,6 +31,6 @@ public interface AppDao {
     @Query("DELETE FROM historical_rate")
     void deleteHistoricalRates();
 
-    @Query("SELECT * FROM historical_rate WHERE code = :code AND time <= :minTime")
+    @Query("SELECT * FROM historical_rate WHERE (code = :code AND time >= :minTime) ORDER BY time ASC")
     LiveData<List<HistoricalRateEntity>> getHistoricalRates(String code, long minTime);
 }

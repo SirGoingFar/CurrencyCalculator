@@ -3,12 +3,27 @@ package com.sirgoingfar.currencyconverter.utils;
 import com.sirgoingfar.currencyconverter.App;
 
 import java.util.Calendar;
+import java.util.TimeZone;
 
 public class DateUtil {
 
     public static final long A_DAY_MILLIS = (24 * 60 * 60 * 1000) - 1000; //minus 1second - cross over time
-    public static final long THIRTY_DAYS_AGO = System.currentTimeMillis() - (30 * A_DAY_MILLIS);
-    public static final long NINETY_DAYS_AGO = System.currentTimeMillis() - (90 * A_DAY_MILLIS);
+    public static final long THIRTY_DAYS = 30 * A_DAY_MILLIS;
+    public static final long NINTY_DAYS = 90 * A_DAY_MILLIS;
+
+    public static long getThirtyDaysAgoEarliestTime() {
+        Calendar cal = App.getCalendarInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        long timeInMillis = cal.getTimeInMillis();
+        return toUnixEpoch(timeInMillis - THIRTY_DAYS);
+    }
+
+    public static long getNintyDaysAgoEarliestTime() {
+        Calendar cal = App.getCalendarInstance();
+        cal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        long timeInMillis = cal.getTimeInMillis();
+        return toUnixEpoch(timeInMillis - NINTY_DAYS);
+    }
 
     public static boolean isTimeTwoDaysAgoOrMore(long lastPollTime) {
 
@@ -54,5 +69,13 @@ public class DateUtil {
         cal.set(Calendar.MINUTE, 0);
         cal.set(Calendar.SECOND, 1);
         return cal.getTimeInMillis();
+    }
+
+    public static long toUnixEpoch(long timeMillis) {
+        return timeMillis / 1000;
+    }
+
+    public static long toMillis(long epochTime) {
+        return epochTime * 1000;
     }
 }
