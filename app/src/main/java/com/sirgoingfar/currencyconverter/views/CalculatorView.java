@@ -1,5 +1,6 @@
 package com.sirgoingfar.currencyconverter.views;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -9,6 +10,7 @@ import android.text.SpannableString;
 import android.text.TextUtils;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.UnderlineSpan;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -25,23 +27,30 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.AxisBase;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
+import com.github.mikephil.charting.formatter.ValueFormatter;
 import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.interfaces.datasets.ILineDataSet;
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.Utils;
 import com.ikmich.numberformat.NumberFormatterTextWatcher;
 import com.ikmich.numberformat.NumberInputFormatter;
+import com.sirgoingfar.currencyconverter.App;
 import com.sirgoingfar.currencyconverter.R;
 import com.sirgoingfar.currencyconverter.models.data.Currency;
+import com.sirgoingfar.currencyconverter.utils.DateUtil;
 import com.sirgoingfar.currencyconverter.utils.FontUtils;
+import com.sirgoingfar.currencyconverter.utils.StringUtil;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Map;
 
 public class CalculatorView {
@@ -228,7 +237,7 @@ public class CalculatorView {
 
     }
 
-    public void setupTrendChart() {
+    public void setupTrendChart(int numOdDaysInPeriod) {
         // // Chart Style // //
 
         // disable description text
@@ -249,14 +258,14 @@ public class CalculatorView {
 
         trendChart.setDrawGridBackground(false);
 
-        trendChart.setNoDataText(FontUtils.createTypefaceSpan(context, "Historical data for this period is unavailable").toString());
+        trendChart.setNoDataText(FontUtils.createTypefaceSpan(context, context.getString(R.string.text_empty_chart_text)).toString());
         trendChart.setNoDataTextColor(ContextCompat.getColor(context, R.color.colorPrimaryDark));
 
-        setupXAxis();
+        setupXAxis(numOdDaysInPeriod);
         setupYAxis();
     }
 
-    private void setupXAxis() {
+    private void setupXAxis(int numOfDaysInPeriod) {
         // // X-Axis Style // //
         xAxis = trendChart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.BOTTOM);
@@ -265,6 +274,16 @@ public class CalculatorView {
         xAxis.setLabelCount(5, true);
         xAxis.setTextSize(10f);
         xAxis.setTextColor(Color.parseColor("#A6DFF4"));
+        xAxis.setValueFormatter(new ValueFormatter() {
+            @Override
+            public String getAxisLabel(float value, AxisBase axis) {
+                Calendar cal = App.getCalendarInstance();
+                cal.set(Calendar.DAY_OF_YEAR, cal.get(Calendar.DAY_OF_YEAR) + (int) value - numOfDaysInPeriod);
+
+                return StringUtil.getFormattedDateText(cal.getTime());
+            }
+        });
+
     }
 
     private void setupYAxis() {

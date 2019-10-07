@@ -6,6 +6,8 @@ import com.sirgoingfar.currencyconverter.App;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 public class StringUtil {
@@ -38,6 +40,22 @@ public class StringUtil {
         cal.setTimeInMillis(timeInMillis);
         SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", App.LOCALE);
         return formatter.format(cal.getTime());
+    }
+
+    public static String getFormattedDateText(Date date) {
+        String text = "";
+        if (date == null)
+            return text;
+
+        Calendar start = Calendar.getInstance();
+        start.setTime(date);
+
+        String dateMonthName = start.getDisplayName(Calendar.MONTH, Calendar.LONG, App.LOCALE);
+        text = text.concat(String.valueOf(start.get(Calendar.DAY_OF_MONTH)));
+        text = text.concat(" ");
+        text = text.concat(dateMonthName.length() > 3 ? dateMonthName.substring(0, 3).concat(".") : dateMonthName);
+
+        return text;
     }
 
 }
